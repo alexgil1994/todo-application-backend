@@ -157,6 +157,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // TODO: 7/26/2020 This maybe it needs to be List<GrantedAuthority> , otherwise if still a problem -> learn the way in the course streams are being used.
         List<SimpleGrantedAuthority> authorityList = new LinkedList<>();
         // Parsing each authority in String[] as a SimpleGrantedAuthorities
         for (String authority:
