@@ -7,6 +7,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 @Entity
 public class User implements UserDetails {
@@ -157,15 +160,16 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        return stream(getUser_authorities()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         // TODO: 7/26/2020 This maybe it needs to be List<GrantedAuthority> , otherwise if still a problem -> learn the way in the course streams are being used.
-        List<SimpleGrantedAuthority> authorityList = new LinkedList<>();
-        // Parsing each authority in String[] as a SimpleGrantedAuthorities
-        for (String authority:
-             this.getUser_authorities()) {
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
-            authorityList.add(simpleGrantedAuthority);
-        }
-        return authorityList;
+//        List<SimpleGrantedAuthority> authorityList = new LinkedList<>();
+//        // Parsing each authority in String[] as a SimpleGrantedAuthorities
+//        for (String authority:
+//             this.getUser_authorities()) {
+//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
+//            authorityList.add(simpleGrantedAuthority);
+//        }
+//        return authorityList;
     }
 
     public String getPassword() {

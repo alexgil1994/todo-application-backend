@@ -14,8 +14,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.markovic.todoApplication.constant.SecurityConstant.*;
+import static java.util.Arrays.stream;
 
 public class JWTTokenProvider {
 
@@ -48,14 +50,15 @@ public class JWTTokenProvider {
 
     public List<GrantedAuthority> getAuthorities(String token){
         String[] claims = getClaimsFromToken(token);
+        return stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         // TODO: 7/26/2020 This maybe it needs to be List<GrantedAuthority> , otherwise if still a problem -> learn the way in the course streams are being used.
-        List<GrantedAuthority> authorityList = new LinkedList<>();
-        for (String claim:
-             claims) {
-            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(claim);
-            authorityList.add(simpleGrantedAuthority);
-        }
-        return authorityList;
+//        List<GrantedAuthority> authorityList = new LinkedList<>();
+//        for (String claim:
+//             claims) {
+//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(claim);
+//            authorityList.add(simpleGrantedAuthority);
+//        }
+//        return authorityList;
     }
 
     private String[] getClaimsFromToken(String token) {
