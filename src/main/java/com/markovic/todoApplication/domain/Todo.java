@@ -8,8 +8,11 @@ public class Todo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false, unique = true, updatable = false)
     private Long id;
+
+    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    private String uuid;
 
     private String title;
 
@@ -20,28 +23,29 @@ public class Todo {
     private boolean finished;
 
     @ManyToOne
-    @JoinColumn(name = "profile_id")
-    private Profile profile;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Todo() {
     }
 
-    public Todo(Long id, String title, String description, Date date_deadline, boolean finished, Profile profile) {
+    public Todo(Long id, String uuid, String title, String description, Date date_deadline, boolean finished, User user) {
         this.id = id;
+        this.uuid = uuid;
         this.title = title;
         this.description = description;
         this.date_deadline = date_deadline;
         this.finished = finished;
-        this.profile = profile;
+        this.user = user;
     }
 
-    public long getId() {
-        return id;
-    }
+    public long getId() { return id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId(Long id) { this.id = id; }
+
+    public String getUuid() { return uuid; }
+
+    public void setUuid(String uuid) { this.uuid = uuid; }
 
     public String getTitle() {
         return title;
@@ -75,11 +79,11 @@ public class Todo {
         this.finished = finished;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public User getUser() {
+        return user;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

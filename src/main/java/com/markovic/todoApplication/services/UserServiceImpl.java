@@ -1,8 +1,8 @@
 package com.markovic.todoApplication.services;
 
-import com.markovic.todoApplication.domain.Profile;
-import com.markovic.todoApplication.repositories.ProfilesRepository;
-import com.markovic.todoApplication.v1.model.ProfileDTO;
+import com.markovic.todoApplication.domain.User;
+import com.markovic.todoApplication.repositories.UserRepository;
+import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -10,15 +10,15 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class ProfileServiceImpl implements ProfileService {
+public class UserServiceImpl implements UserService {
 
     @Autowired
-    ProfilesRepository profilesRepository;
+    UserRepository userRepository;
 
     @Override
-    public Profile getById(Long id) {
+    public User getById(Long id) {
         try {
-            Optional<Profile> optionalProfile = profilesRepository.findById(id);
+            Optional<User> optionalProfile = userRepository.findById(id);
             return optionalProfile.orElse(null);
         }catch (Exception e){
             throw e;
@@ -27,7 +27,7 @@ public class ProfileServiceImpl implements ProfileService {
 
     // TODO: 7/14/2020 Implement the rest of the methods
     @Override
-    public Profile addProfile(ProfileDTO profileDTO) {
+    public User addProfile(UserDTO userDTO) {
         return null;
     }
 
@@ -37,12 +37,12 @@ public class ProfileServiceImpl implements ProfileService {
     }
 
     @Override
-    public boolean patchProfile(Long id, ProfileDTO profileDTO) {
+    public boolean patchProfile(Long id, UserDTO userDTO) {
         return false;
     }
 
     @Override
-    public Page<Profile> getAllByPaging(Integer page) {
+    public Page<User> getAllByPaging(Integer page) {
         return null;
     }
 
