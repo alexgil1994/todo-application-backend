@@ -1,6 +1,7 @@
 package com.markovic.todoApplication.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +20,10 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false, unique = true, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    // TODO: 7/27/2020 If it doesn't work i can user RandomStringUtils.randomNumeric(10) to generate a String of 10 numeric values using the library we have installed
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Type(type="uuid-char")
+    @Column(name = "uuid", columnDefinition = "VARCHAR(255)", nullable = false, unique = true, updatable = false)
     private String uuid;
 
     @Column(name = "first_name", nullable = false)
@@ -34,6 +38,7 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    // TODO: 7/27/2020 Could use a random password if needed (for example for when resetting the password to send it in the email) using RandomStringUtils.randomAlphanumeric(10)
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -49,7 +54,7 @@ public class User implements UserDetails {
 
     private Boolean is_not_locked;
 
-    private String[] user_roles;
+    private String user_role;
 
     private String[] user_authorities;
 
@@ -70,7 +75,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String[] user_roles, String[] user_authorities, Set<Todo> todoSet) {
+    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet) {
         this.id = id;
         this.uuid = uuid;
         this.first_name = first_name;
@@ -84,7 +89,7 @@ public class User implements UserDetails {
         this.last_login_date_display = last_login_date_display;
         this.is_enabled = is_enabled;
         this.is_not_locked = is_not_locked;
-        this.user_roles = user_roles;
+        this.user_role = user_role;
         this.user_authorities = user_authorities;
         this.todoSet = todoSet;
     }
@@ -161,15 +166,6 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return stream(getUser_authorities()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        // TODO: 7/26/2020 This maybe it needs to be List<GrantedAuthority> , otherwise if still a problem -> learn the way in the course streams are being used.
-//        List<SimpleGrantedAuthority> authorityList = new LinkedList<>();
-//        // Parsing each authority in String[] as a SimpleGrantedAuthorities
-//        for (String authority:
-//             this.getUser_authorities()) {
-//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
-//            authorityList.add(simpleGrantedAuthority);
-//        }
-//        return authorityList;
     }
 
     public String getPassword() {
@@ -228,12 +224,12 @@ public class User implements UserDetails {
         this.is_not_locked = is_not_locked;
     }
 
-    public String[] getUser_roles() {
-        return user_roles;
+    public String getUser_role() {
+        return user_role;
     }
 
-    public void setUser_roles(String[] user_roles) {
-        this.user_roles = user_roles;
+    public void setUser_role(String user_role) {
+        this.user_role = user_role;
     }
 
     public String[] getUser_authorities() {

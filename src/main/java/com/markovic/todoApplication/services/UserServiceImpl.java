@@ -3,47 +3,174 @@ package com.markovic.todoApplication.services;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.UserRepository;
 import com.markovic.todoApplication.v1.model.UserDTO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
+import static com.markovic.todoApplication.enumeration.Role.ROLE_USER;
+
+// We are using the qualifier to set another name for this service in order to use it in auth in the SecurityConfiguration
+//@Qualifier("userDetailService")
 @Service
-public class UserServiceImpl implements UserService {
+@Transactional
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
 
+    // TODO: 7/27/2020 He again uses a Constructor and autowiring him instead of this way
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
+
     @Override
     public User getById(Long id) {
         try {
-            Optional<User> optionalProfile = userRepository.findById(id);
-            return optionalProfile.orElse(null);
+            Optional<User> optionalUser = userRepository.findById(id);
+            return optionalUser.orElse(null);
         }catch (Exception e){
             throw e;
         }
     }
 
-    // TODO: 7/14/2020 Implement the rest of the methods
     @Override
-    public User addProfile(UserDTO userDTO) {
+    public User register(String first_name, String last_name, String username, String password, String email) {
+        // Validating that a user with this username or email doesn't already exist
+        validateNewUsernameAndEmail(username, email);
+        User newUser = new User();
+        newUser.setFirst_name(first_name);
+        newUser.setLast_name(last_name);
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        // Encoding the password
+        String encoded_password = encodePassword(password);
+        newUser.setPassword(encoded_password);
+        newUser.setAdded_date(new Date());
+        newUser.setIs_not_locked(true);
+        newUser.setIs_enabled(true);
+        // Setting Role
+        newUser.setUser_role(ROLE_USER.name());
+        // Setting Authorities
+        newUser.setUser_authorities(ROLE_USER.getAuthorities());
+        // TODO: Set-up with Cloudinary to use for images, having a default in there and saving others
+        newUser.setImage_url(null);
+        return userRepository.save(newUser);
+    }
+
+    // Encoding the password with bcrypt
+    private String encodePassword(String password) {
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    private void validateNewUsernameAndEmail(String username, String email) {
+        // We are using the check methods instead of load because they can return null, while load methods would throw an Exception
+        User userByUsername = checkUserByUsername(username);
+        User userByEmail = checkUserByEmail(email);
+        if (userByUsername != null || userByEmail != null){
+            throw new RuntimeException("User already exists");
+        }
+    }
+
+    @Override
+    public List<User> getUsers() {
         return null;
     }
 
     @Override
-    public boolean deleteProfile(Long id) {
-        return false;
+    public User checkUserByUsername(String username) {
+        // Checking to see if it is null, empty or having only spaces
+        if (StringUtils.isNotBlank(username)){
+            Optional<User> optionalUser = userRepository.findByUsername(username);
+            return optionalUser.orElse(null);
+        } else {
+            throw new IllegalArgumentException("The specified argument username of: " + username + " is not wrongly inputted");
+        }
     }
 
     @Override
-    public boolean patchProfile(Long id, UserDTO userDTO) {
-        return false;
+    public User findUserByUsername(String username) {
+        // Checking to see if it is null, empty or having only spaces
+        if (StringUtils.isNotBlank(username)){
+            Optional<User> optionalUser = userRepository.findByUsername(username);
+            if (optionalUser.isPresent()){
+                return optionalUser.get();
+            } else throw new RuntimeException("User with username of: " + username + " wasn't found.");
+        } else {
+            throw new IllegalArgumentException("The specified argument username of: " + username + " is not wrongly inputted");
+        }
     }
+
+    @Override
+    public User checkUserByEmail(String email) {
+        // Checking to see if it is null, empty or having only spaces
+        if (StringUtils.isNotBlank(email)){
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            return optionalUser.orElse(null);
+        } else {
+            throw new IllegalArgumentException("The specified argument email of: " + email + " is not wrongly inputted");
+        }
+    }
+
+    @Override
+    public User findUserByEmail(String email) {
+        // Checking to see if it is null, empty or having only spaces
+        if (StringUtils.isNotBlank(email)){
+            Optional<User> optionalUser = userRepository.findByEmail(email);
+            if (optionalUser.isPresent()){
+                return optionalUser.get();
+            } else throw new RuntimeException("User with email of: " + email + " wasn't found.");
+        } else {
+            throw new IllegalArgumentException("The specified argument email of: " + email + " is not wrongly inputted");
+        }
+    }
+
+
+
+    // For authentication
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Optional<User> optionalUser = userRepository.findByUsername(username);
+        if (optionalUser.isPresent()){
+            User user = optionalUser.get();
+            // Setting the displaying to be the previously last login date and changing the last login date to be now
+            user.setLast_login_date_display(user.getLast_login_date());
+            user.setLast_login_date(new Date());
+            // Saving the user and returning a UserDetails user
+            return userRepository.save(user);
+        } else {
+            throw new UsernameNotFoundException("User not found by username: " + username);
+        }
+    }
+
 
     @Override
     public Page<User> getAllByPaging(Integer page) {
         return null;
     }
 
+
+    // TODO: 7/14/2020 Implement the rest of the methods
+    @Override
+    public User addUser(UserDTO userDTO) {
+        return null;
+    }
+
+    @Override
+    public boolean deleteUser(Long id) {
+        return false;
+    }
+
+    @Override
+    public boolean patchUser(Long id, UserDTO userDTO) {
+        return false;
+    }
 }

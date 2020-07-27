@@ -45,6 +45,20 @@
 			<artifactId>java-jwt</artifactId>
 			<version>3.10.3</version>
 		</dependency>
+		<!-- To check Strings if null or empty or spaces - library -->
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.11</version>
+		</dependency>
+		<!-- Logback for SLF4J logging -->
+<!--		<dependency>-->
+<!--			<groupId>ch.qos.logback</groupId>-->
+<!--			<artifactId>logback-classic</artifactId>-->
+<!--			<version>1.1.7</version>-->
+<!--		</dependency>-->
+
+
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

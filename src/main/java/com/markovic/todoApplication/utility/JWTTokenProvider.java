@@ -6,19 +6,27 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.markovic.todoApplication.constant.SecurityConstant;
 import com.markovic.todoApplication.domain.User;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.markovic.todoApplication.constant.SecurityConstant.*;
 import static java.util.Arrays.stream;
 
+// Could use another one for different specification porpuses depending on the needs of our app
+// Could be done the same way in the same page in another Class
+@Component
 public class JWTTokenProvider {
 
     // TODO: 7/26/2020 Should be Secret, as a property file in the server and get it from there for more security
@@ -48,24 +56,44 @@ public class JWTTokenProvider {
                 .sign(Algorithm.HMAC512(secret.getBytes()));
     }
 
+    // Getting Authorities from the token and return them as GrandedAuthorities
     public List<GrantedAuthority> getAuthorities(String token){
         String[] claims = getClaimsFromToken(token);
         return stream(claims).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        // TODO: 7/26/2020 This maybe it needs to be List<GrantedAuthority> , otherwise if still a problem -> learn the way in the course streams are being used.
-//        List<GrantedAuthority> authorityList = new LinkedList<>();
-//        for (String claim:
-//             claims) {
-//            SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(claim);
-//            authorityList.add(simpleGrantedAuthority);
-//        }
-//        return authorityList;
     }
 
+    // Authenticating ***
+    public Authentication getAuthentication(String username, List<GrantedAuthority> authorities, HttpServletRequest request){
+        UsernamePasswordAuthenticationToken usernamePasswordAuthToken = new UsernamePasswordAuthenticationToken(username, null, authorities);
+        usernamePasswordAuthToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        return usernamePasswordAuthToken;
+    }
+
+    // Checking if the token is valid, not expired and username isn't null or empty or with spaces
+    public boolean isTokenValid(String username, String token){
+        JWTVerifier verifier = getJWTVerifier();
+        return StringUtils.isNotEmpty(username) && isTokenExpired(verifier, token);
+    }
+
+    // Getting the Subject (i think user) from the token
+    public String getSubject(String token){
+        JWTVerifier verifier = getJWTVerifier();
+        return verifier.verify(token).getSubject();
+    }
+
+    // Checking if the token isn't expired
+    private boolean isTokenExpired(JWTVerifier verifier, String token) {
+        Date expiration = verifier.verify(token).getExpiresAt();
+        return expiration.before(new Date());
+    }
+
+    // Verifying the token and getting claims (authorities)
     private String[] getClaimsFromToken(String token) {
         JWTVerifier verifier = getJWTVerifier();
         return verifier.verify(token).getClaim(AUTHORITIES).asArray(String.class);
     }
 
+    // Verifying the token is legit having correct credentials
     private JWTVerifier getJWTVerifier() {
         JWTVerifier verifier;
         try {
@@ -77,6 +105,7 @@ public class JWTTokenProvider {
         return verifier;
     }
 
+    // Getting authorities from the user
     private String[] getClaimsFromUser(User user) {
         List<String> authorities = new ArrayList<>();
         for (GrantedAuthority grantedAuthority:

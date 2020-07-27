@@ -1,7 +1,9 @@
 package com.markovic.todoApplication.controllers;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.markovic.todoApplication.domain.User;
+import com.markovic.todoApplication.services.UserServiceImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(UserController.BASE_URL)
@@ -9,5 +11,13 @@ public class UserController {
 
     public static final String BASE_URL = "v1/user";
 
-    // TODO: 7/14/2020 Implement Rest requests
+    private UserServiceImpl userServiceImpl;
+
+    // TODO: 7/27/2020
+    @CrossOrigin
+    @PostMapping("/register")
+    @ResponseStatus(HttpStatus.OK)
+    public User register(@RequestBody User user){
+        return userServiceImpl.register(user.getFirst_name(), user.getLast_name(), user.getUsername(), user.getPassword(), user.getEmail());
+    }
 }

@@ -1,5 +1,7 @@
 package com.markovic.todoApplication.domain;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -11,7 +13,10 @@ public class Todo {
     @Column(name = "id", nullable = false, unique = true, updatable = false)
     private Long id;
 
-    @Column(name = "uuid", nullable = false, unique = true, updatable = false)
+    // TODO: 7/27/2020 If it doesn't work i can user RandomStringUtils.randomNumeric(10) to generate a String of 10 numeric values using the library we have installed
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Type(type="uuid-char")
+    @Column(name = "uuid", columnDefinition = "VARCHAR(255)", nullable = false, unique = true, updatable = false)
     private String uuid;
 
     private String title;
