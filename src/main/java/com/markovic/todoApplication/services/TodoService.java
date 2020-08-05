@@ -13,4 +13,6 @@ public interface TodoService {
     Todo getByUuid(String uuid);
 
     Set<Todo> getTodoListByUsername(String username);
+
+    void deleteTodoById(Long id, String username);
 }

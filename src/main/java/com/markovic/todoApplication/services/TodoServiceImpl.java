@@ -20,6 +20,9 @@ public class TodoServiceImpl implements TodoService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserServiceImpl userService;
+
     @Override
     public Todo getById(Long id) {
         Optional<Todo> optionalTodo = todoRepository.findById(id);
@@ -44,6 +47,41 @@ public class TodoServiceImpl implements TodoService {
         } else {
             throw new RuntimeException("User with username of: " + username + " does not exist");
         }
+    }
+
+    @Override
+    public void deleteTodoById(Long id, String username) {
+        // Checks - Exceptions in the method
+        User user = userService.findUserByUsername(username);
+        // Checks - Exceptions in the method
+        Todo todo = findTodoById(id);
+        // Checking Id's, if true delete it else throw exception
+        if (checkIfTodoIdAndUsernameFit(todo, user)){
+            todoRepository.deleteById(id);
+            // Check if stills exists after deleting
+            if (checkTodoById(id)){
+                throw new RuntimeException("The Todo with Id of: " + id + "wasn't deleted since it was found again");
+            }
+        } else throw new RuntimeException("The User's id and the connected User's id from the Todo didn't match");
+    }
+
+    // Throws Exceptions if not found
+    private Todo findTodoById(Long id) {
+        Optional<Todo> optionalTodo = todoRepository.findById(id);
+        if (optionalTodo.isPresent()){
+            return optionalTodo.get();
+        } else throw new RuntimeException("Todo with id of: " + id + " wasn't found.");
+    }
+
+    // Doesn't throw exceptions, its a helper method. If exists, return true, if not then false
+    private boolean checkTodoById(Long id) {
+        Optional<Todo> optionalTodo = todoRepository.findById(id);
+        return optionalTodo.isPresent();
+    }
+
+    // Checks if user's ids match between
+    private boolean checkIfTodoIdAndUsernameFit(Todo todo, User user){
+        return todo.getUser().getId().equals(user.getId());
     }
 
 }
