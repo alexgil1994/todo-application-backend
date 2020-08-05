@@ -28,6 +28,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+
+
     // TODO: 7/27/2020 He again uses a Constructor and autowiring him instead of this way
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -42,6 +44,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
+
+
+    // Registration method
     @Override
     public User register(String first_name, String last_name, String username, String password, String email) {
         // Validating that a user with this username or email doesn't already exist

@@ -14,6 +14,7 @@ public class Todo {
     private Long id;
 
     // TODO: 7/27/2020 If it doesn't work i can user RandomStringUtils.randomNumeric(10) to generate a String of 10 numeric values using the library we have installed
+    // Defining the uuid as a char because the default would be bytes
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Type(type="uuid-char")
     @Column(name = "uuid", columnDefinition = "VARCHAR(255)", nullable = false, unique = true, updatable = false)
