@@ -62,6 +62,11 @@ public class User implements UserDetails {
     @JsonIgnore
     private Set<Todo> todoSet = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    @JsonIgnore
+    private Set<Stigma> stigmaSet = new HashSet<>();
+
+    // Basic methods
     public void addTodo(Todo todo){
         todo.setUser(this);
         this.todoSet.add(todo);
@@ -72,10 +77,21 @@ public class User implements UserDetails {
         this.todoSet.remove(todo);
     }
 
+    // Basic methods
+    public void addStigma(Stigma stigma){
+        stigma.setUser(this);
+        this.stigmaSet.add(stigma);
+    }
+
+    public void removeStigma(Stigma stigma){
+        stigma.setUser(null);
+        this.stigmaSet.remove(stigma);
+    }
+
     public User() {
     }
 
-    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet) {
+    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet, Set<Stigma> stigmaSet) {
         this.id = id;
         this.uuid = uuid;
         this.first_name = first_name;
@@ -92,6 +108,7 @@ public class User implements UserDetails {
         this.user_role = user_role;
         this.user_authorities = user_authorities;
         this.todoSet = todoSet;
+        this.stigmaSet = stigmaSet;
     }
 
     public Long getId() {
@@ -246,5 +263,13 @@ public class User implements UserDetails {
 
     public void setTodoSet(Set<Todo> todoSet) {
         this.todoSet = todoSet;
+    }
+
+    public Set<Stigma> getStigmaSet() {
+        return stigmaSet;
+    }
+
+    public void setStigmaSet(Set<Stigma> stigmaSet) {
+        this.stigmaSet = stigmaSet;
     }
 }

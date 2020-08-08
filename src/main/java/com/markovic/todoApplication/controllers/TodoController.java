@@ -19,10 +19,11 @@ public class TodoController {
     private TodoServiceImpl todoService;
 
 
+    // TODO: 8/8/2020 Mine
     @CrossOrigin
     @GetMapping("/getAllTodosByUsername")
     @ResponseStatus(HttpStatus.OK)
-    public Set<Todo> getTodosByUserUsername(@RequestBody String username){
+    public Set<Todo> getTodosByUsername(@RequestParam String username){
         return todoService.getTodoListByUsername(username);
     }
 
@@ -30,7 +31,7 @@ public class TodoController {
     @CrossOrigin
     @DeleteMapping("/deleteTodoByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteTodoById(@RequestBody Long id, String username){
+    public void deleteTodoById(@RequestParam Long id, @RequestParam String username){
         todoService.deleteTodoById(id, username);
     }
 

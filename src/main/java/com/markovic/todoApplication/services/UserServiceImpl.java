@@ -1,5 +1,6 @@
 package com.markovic.todoApplication.services;
 
+import com.markovic.todoApplication.domain.Stigma;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.UserRepository;
 import com.markovic.todoApplication.v1.model.UserDTO;
@@ -45,10 +46,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
-
+    // TODO: 8/7/2020 Implement checking if the user already exists as ipUser and transfer
     // Registration method
     @Override
-    public User register(String first_name, String last_name, String username, String password, String email) {
+    public User register(String first_name, String last_name, String username, String password, String email, String ip) {
         // Validating that a user with this username or email doesn't already exist
         validateNewUsernameAndEmail(username, email);
         User newUser = new User();
@@ -68,7 +69,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         newUser.setUser_authorities(ROLE_USER.getAuthorities());
         // TODO: Set-up with Cloudinary to use for images, having a default in there and saving others
         newUser.setImage_url(null);
+        // Checking if ip is blank, if not then creating a new Stigma, setting ip and connecting it with the user
+        if (checkStigma(ip)) newUser.addStigma(new Stigma(ip));
+
         return userRepository.save(newUser);
+    }
+
+    // Checking if ip is null
+    private boolean checkStigma(String ip) {
+        return StringUtils.isNotBlank(ip);
+    }
+
+    // TODO: 8/7/2020 Mine
+    @Override
+    public User login(String first_name, String last_name, String username, String password, String email, String ip) {
+        return null;
     }
 
     // Encoding the password with bcrypt
@@ -84,6 +99,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new RuntimeException("User already exists");
         }
     }
+
+
 
     @Override
     public List<User> getUsers() {
@@ -169,13 +186,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return null;
     }
 
+    // TODO: 8/7/2020 Mine
     @Override
-    public boolean deleteUser(Long id) {
-        return false;
+    public void deleteUser(String username) {
+        // Checks - Exceptions in the method
+        User user = findUserByUsername(username);
+        // Checking Id's, if true delete it else throw exception
+        userRepository.deleteById(user.getId());
+        // Check if stills exists after deleting
+        if (checkUserById(user.getId())){
+            throw new RuntimeException("The User with Username of: " + username + "wasn't deleted since it was found again");
+        }
+    }
+
+    // Doesn't throw exceptions, its a helper method. If exists, return true, if not then false
+    private boolean checkUserById(Long id) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        return optionalUser.isPresent();
     }
 
     @Override
     public boolean patchUser(Long id, UserDTO userDTO) {
         return false;
     }
+
 }

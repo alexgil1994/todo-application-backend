@@ -12,7 +12,9 @@ public interface UserService {
 
     User getById(Long id);
 
-    User register(String first_name, String last_name, String username, String password, String email);
+    User register(String first_name, String last_name, String username, String password, String email, String ip);
+
+    User login(String first_name, String last_name, String username, String password, String email, String ip);
 
     List<User> getUsers();
 
@@ -30,9 +32,8 @@ public interface UserService {
     // Not really needed
     User addUser(UserDTO userDTO);
 
-    boolean deleteUser(Long id);
+    void deleteUser(String username);
 
     boolean patchUser(Long id, UserDTO userDTO);
-
 
 }
