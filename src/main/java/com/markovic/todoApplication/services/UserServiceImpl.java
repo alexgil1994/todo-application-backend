@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.save(newUser);
     }
 
-    // TODO: 8/8/2020 Test
+    // TODO: 8/8/2020 FIXXX StackOverFlowError: null when trying to login while permitting all links
     @Override
     public ResponseEntity<User> login(String username, String password, String email, String ip) {
         authenticate(username, password);

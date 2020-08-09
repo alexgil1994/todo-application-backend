@@ -17,8 +17,6 @@ public class UserController {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
-    // TODO: 8/9/2020 FIX USING POSTMAN IT THROWS FORBIDDEN EXCEPTION EVEN THOUGH FOR REGISTER THE URL IS DEFINED IN THE PUBLIC URLS
-    // TODO: 7/27/2020
     @CrossOrigin
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
@@ -26,6 +24,7 @@ public class UserController {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
+    // TODO: 8/10/2020 Fix StackOverflowError: null
     @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
