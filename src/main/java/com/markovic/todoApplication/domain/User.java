@@ -1,7 +1,6 @@
 package com.markovic.todoApplication.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Type;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,10 +19,8 @@ public class User implements UserDetails {
     @Column(name = "id", nullable = false, unique = true, updatable = false)
     private Long id;
 
-    // TODO: 7/27/2020 If it doesn't work i can user RandomStringUtils.randomNumeric(10) to generate a String of 10 numeric values using the library we have installed
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Type(type="uuid-char")
-    @Column(name = "uuid", columnDefinition = "VARCHAR(255)", nullable = false, unique = true, updatable = false)
+    // Can't be generated automatically by spring because we already use @Id for the id. Could be done if we used as main id column the uuid.
+    @Column(name = "uuid", nullable = false, unique = true)
     private String uuid;
 
     @Column(name = "first_name", nullable = false)

@@ -5,6 +5,7 @@ import com.markovic.todoApplication.services.UserServiceImpl;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,6 +17,7 @@ public class UserController {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
+    // TODO: 8/9/2020 FIX USING POSTMAN IT THROWS FORBIDDEN EXCEPTION EVEN THOUGH FOR REGISTER THE URL IS DEFINED IN THE PUBLIC URLS
     // TODO: 7/27/2020
     @CrossOrigin
     @PostMapping("/register")
@@ -24,12 +26,10 @@ public class UserController {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
-    // TODO: 8/7/2020 Mine
     @CrossOrigin
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    public User login(@RequestBody UserDTO userDTO){
-        return userServiceImpl.login(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
+    public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
+        return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
     // TODO: 8/8/2020 Mine

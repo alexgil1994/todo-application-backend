@@ -13,11 +13,9 @@ public class Todo {
     @Column(name = "id", nullable = false, unique = true, updatable = false)
     private Long id;
 
-    // TODO: 7/27/2020 If it doesn't work i can user RandomStringUtils.randomNumeric(10) to generate a String of 10 numeric values using the library we have installed
-    // Defining the uuid as a char because the default would be bytes
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Type(type="uuid-char")
-    @Column(name = "uuid", columnDefinition = "VARCHAR(255)", nullable = false, unique = true, updatable = false)
+    // TODO: 8/10/2020 Generate it manually
+    // Can't be generated automatically by spring because we already use @Id for the id. Could be done if we used as main id column the uuid.
+    @Column(name = "uuid", nullable = false, unique = true)
     private String uuid;
 
     private String title;

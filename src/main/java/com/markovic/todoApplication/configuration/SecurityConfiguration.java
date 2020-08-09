@@ -48,6 +48,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // We permit requests that are from the permitted public urls we defined
         // Any other request will be authenticated
         // Defining to use our filter.
+        // TODO: 8/9/2020 FIXXXX THE PERMITALL public urls doesnt work. even though i am accessing /v1/user/register it throws forbidden
+        // TODO: 8/9/2020 If i comment the two last lines if this (authentication) then it works.
         http.csrf().disable().cors()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers(SecurityConstant.PUBLIC_URLS).permitAll()

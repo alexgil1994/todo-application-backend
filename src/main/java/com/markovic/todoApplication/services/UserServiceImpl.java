@@ -2,11 +2,19 @@ package com.markovic.todoApplication.services;
 
 import com.markovic.todoApplication.domain.Stigma;
 import com.markovic.todoApplication.domain.User;
+import com.markovic.todoApplication.repositories.StigmaRepository;
 import com.markovic.todoApplication.repositories.UserRepository;
+import com.markovic.todoApplication.utility.JWTTokenProvider;
 import com.markovic.todoApplication.v1.model.UserDTO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static com.markovic.todoApplication.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static com.markovic.todoApplication.enumeration.Role.ROLE_USER;
 
 // We are using the qualifier to set another name for this service in order to use it in auth in the SecurityConfiguration
@@ -27,8 +36,16 @@ import static com.markovic.todoApplication.enumeration.Role.ROLE_USER;
 public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
+    @Autowired
+    private StigmaRepository stigmaRepository;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JWTTokenProvider jwtTokenProvider;
 
 
     // TODO: 7/27/2020 He again uses a Constructor and autowiring him instead of this way
@@ -53,6 +70,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // Validating that a user with this username or email doesn't already exist
         validateNewUsernameAndEmail(username, email);
         User newUser = new User();
+        newUser.setUuid(RandomStringUtils.randomAlphanumeric(14));
         newUser.setFirst_name(first_name);
         newUser.setLast_name(last_name);
         newUser.setUsername(username);
@@ -71,19 +89,33 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         newUser.setImage_url(null);
         // Checking if ip is blank, if not then creating a new Stigma, setting ip and connecting it with the user
         if (checkStigma(ip)) newUser.addStigma(new Stigma(ip));
-
         return userRepository.save(newUser);
+    }
+
+    // TODO: 8/8/2020 Test
+    @Override
+    public ResponseEntity<User> login(String username, String password, String email, String ip) {
+        authenticate(username, password);
+        User existingUser = findUserByUsername(username);
+        // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
+        if (checkStigma(ip)) existingUser.addStigma(new Stigma(ip));
+        HttpHeaders jwtHeader = getJwtHeader(existingUser);
+        return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
+    }
+
+    private HttpHeaders getJwtHeader(User existingUser) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(existingUser));
+        return headers;
+    }
+
+    private void authenticate(String username, String password) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
     // Checking if ip is null
     private boolean checkStigma(String ip) {
         return StringUtils.isNotBlank(ip);
-    }
-
-    // TODO: 8/7/2020 Mine
-    @Override
-    public User login(String first_name, String last_name, String username, String password, String email, String ip) {
-        return null;
     }
 
     // Encoding the password with bcrypt
@@ -99,7 +131,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             throw new RuntimeException("User already exists");
         }
     }
-
 
 
     @Override

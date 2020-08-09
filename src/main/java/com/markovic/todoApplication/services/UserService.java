@@ -3,6 +3,7 @@ package com.markovic.todoApplication.services;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface UserService {
 
     User register(String first_name, String last_name, String username, String password, String email, String ip);
 
-    User login(String first_name, String last_name, String username, String password, String email, String ip);
+    ResponseEntity<User> login(String first_name, String last_name, String username, String password);
 
     List<User> getUsers();
 
