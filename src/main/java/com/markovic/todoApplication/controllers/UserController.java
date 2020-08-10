@@ -1,7 +1,9 @@
 package com.markovic.todoApplication.controllers;
 
+import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.services.UserServiceImpl;
+import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +31,12 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
         return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
+    }
+
+    @CrossOrigin
+    @PostMapping("/addNewTodo")
+    public Todo addNewTodo(@RequestBody TodoDTO todoDTO){
+        return userServiceImpl.addNewTodo(todoDTO);
     }
 
     // TODO: 8/8/2020 Mine

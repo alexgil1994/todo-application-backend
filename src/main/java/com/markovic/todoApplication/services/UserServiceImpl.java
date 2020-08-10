@@ -1,10 +1,13 @@
 package com.markovic.todoApplication.services;
 
 import com.markovic.todoApplication.domain.Stigma;
+import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.StigmaRepository;
+import com.markovic.todoApplication.repositories.TodoRepository;
 import com.markovic.todoApplication.repositories.UserRepository;
 import com.markovic.todoApplication.utility.JWTTokenProvider;
+import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +43,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private StigmaRepository stigmaRepository;
+
+    @Autowired
+    private TodoRepository todoRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -95,6 +101,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // TODO: 8/8/2020 FIXXX StackOverFlowError: null when trying to login while permitting all links
     @Override
     public ResponseEntity<User> login(String username, String password, String email, String ip) {
+        // TODO: 8/10/2020 authenticate() throws the stackoverflaw error
         authenticate(username, password);
         User existingUser = findUserByUsername(username);
         // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
@@ -239,6 +246,27 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public boolean patchUser(Long id, UserDTO userDTO) {
         return false;
+    }
+
+    @Override
+    public Todo addNewTodo(TodoDTO todoDTO) {
+        User existingUser = findUserByUsername(todoDTO.getUsername());
+        Todo newTodo = createNewTodo(todoDTO);
+        existingUser.addTodo(newTodo);
+        userRepository.save(existingUser);
+        Optional<Todo> optionalTodo = todoRepository.findByUuid(newTodo.getUuid());
+        if (optionalTodo.isPresent()) return optionalTodo.get();
+        else throw new RuntimeException("There was a problem trying to save the new Todo with uuid of: " + newTodo.getUuid() + ".");
+    }
+
+    private Todo createNewTodo(TodoDTO todoDTO) {
+        Todo newTodo = new Todo();
+        newTodo.setTitle(todoDTO.getTitle());
+        newTodo.setDescription(todoDTO.getDescription());
+        newTodo.setDate_deadline(todoDTO.getDate_deadline());
+        newTodo.setFinished(todoDTO.isFinished());
+        newTodo.setUuid(RandomStringUtils.randomAlphanumeric(14));
+        return newTodo;
     }
 
 }

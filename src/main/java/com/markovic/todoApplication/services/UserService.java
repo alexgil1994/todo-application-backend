@@ -1,6 +1,8 @@
 package com.markovic.todoApplication.services;
 
+import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
+import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -37,4 +39,5 @@ public interface UserService {
 
     boolean patchUser(Long id, UserDTO userDTO);
 
+    Todo addNewTodo(TodoDTO todoDTO);
 }
