@@ -37,7 +37,11 @@ public interface UserService {
 
     void deleteUser(String username);
 
-    boolean patchUser(Long id, UserDTO userDTO);
+    User patchUser(UserDTO userDTO);
 
     Todo addNewTodo(TodoDTO todoDTO);
+
+    Todo patchTodo(TodoDTO todoDTO);
+
+    User patchUsernameOfUser(UserDTO userDTO);
 }

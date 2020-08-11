@@ -48,6 +48,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private TodoRepository todoRepository;
 
     @Autowired
+    private TodoServiceImpl todoServiceImpl;
+
+    @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
@@ -243,9 +246,40 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return optionalUser.isPresent();
     }
 
+    // TODO: 8/11/2020 --How to make it SECURE knowing surely that the user that triggers the request is actually the one that asks the request and not someone else that by-passed (got it somehow) JWT token. --Could be with actually checking the token de-encrypting it to see the actual username (Learn how to do this also manually (Spring security does it as well))
     @Override
-    public boolean patchUser(Long id, UserDTO userDTO) {
-        return false;
+    public User patchUser(UserDTO userDTO) {
+        // Throwing exceptions in the method
+        User existingUser = findUserByUsername(userDTO.getUsername());
+        if (checkIfEditIsBySameUser(userDTO.getUsername(), existingUser)){
+            if (userDTO.getFirst_name() != null) existingUser.setFirst_name(userDTO.getFirst_name());
+            if (userDTO.getLast_name() != null) existingUser.setLast_name(userDTO.getLast_name());
+            if (userDTO.getEmail() != null) existingUser.setEmail(userDTO.getEmail());
+            // TODO: 8/11/2020 Handle it differently sending an email also to require access for such change
+            if (userDTO.getEmail() != null) {
+                // Patching Email Checking method will return null if not found (Exception-safe-method)
+                if (checkUserByEmail(userDTO.getEmail()) != null){
+                    existingUser.setEmail(userDTO.getEmail());
+                }
+            }
+        }
+        return userRepository.save(existingUser);
+    }
+
+    // Checking if usernames match
+    private boolean checkIfEditIsBySameUser(String username, User existingUser) {
+        return username.equals(existingUser.getUsername());
+    }
+
+    // TODO: 8/11/2020 Find a better approach
+    @Override
+    public User patchUsernameOfUser(UserDTO userDTO) {
+        // Does all the checks-exceptions inside
+        User existingUser = findUserByEmail(userDTO.getEmail());
+        if (StringUtils.isNotBlank(userDTO.getUsername()) && StringUtils.isNotEmpty(userDTO.getUsername()) && checkUserByUsername(userDTO.getUsername()) != null){
+            existingUser.setEmail(userDTO.getEmail());
+            return existingUser;
+        } else throw new RuntimeException("Username param was either empty, blank or User didn't exist in the db with such.");
     }
 
     @Override
@@ -257,6 +291,18 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Optional<Todo> optionalTodo = todoRepository.findByUuid(newTodo.getUuid());
         if (optionalTodo.isPresent()) return optionalTodo.get();
         else throw new RuntimeException("There was a problem trying to save the new Todo with uuid of: " + newTodo.getUuid() + ".");
+    }
+
+    @Override
+    public Todo patchTodo(TodoDTO todoDTO) {
+        User existingUser = findUserByUsername(todoDTO.getUsername());
+        Todo existingTodo = todoServiceImpl.findTodoById(todoDTO.getId());
+        if (existingTodo.getUser().getId().equals(existingUser.getId())){
+            if (todoDTO.getTitle() != null) existingTodo.setTitle(todoDTO.getTitle());
+            if (todoDTO.getDescription() != null) existingTodo.setDescription(todoDTO.getDescription());
+            if (todoDTO.getDate_deadline() != null) existingTodo.setDate_deadline(todoDTO.getDate_deadline());
+            return todoRepository.save(existingTodo);
+        } else throw new RuntimeException("Todo with id of: " + todoDTO.getId() + " is not connected with User with id of: " + existingUser.getId());
     }
 
     private Todo createNewTodo(TodoDTO todoDTO) {

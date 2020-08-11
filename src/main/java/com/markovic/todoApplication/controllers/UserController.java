@@ -26,6 +26,20 @@ public class UserController {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
+    @CrossOrigin
+    @PatchMapping("/patchUser")
+    @ResponseStatus(HttpStatus.OK)
+    public User patchUser(@RequestBody UserDTO userDTO){
+        return userServiceImpl.patchUser(userDTO);
+    }
+
+    @CrossOrigin
+    @PatchMapping("/patchUsernameOfUser")
+    @ResponseStatus(HttpStatus.OK)
+    public User patchUsernameOfUser(@RequestBody UserDTO userDTO){
+        return userServiceImpl.patchUsernameOfUser(userDTO);
+    }
+
     // TODO: 8/10/2020 Fix StackOverflowError: null
     @CrossOrigin
     @PostMapping("/login")
@@ -35,9 +49,15 @@ public class UserController {
 
     @CrossOrigin
     @PostMapping("/addNewTodo")
+    @ResponseStatus(HttpStatus.OK)
     public Todo addNewTodo(@RequestBody TodoDTO todoDTO){
         return userServiceImpl.addNewTodo(todoDTO);
     }
+
+    @CrossOrigin
+    @PatchMapping("/patchTodo")
+    @ResponseStatus(HttpStatus.OK)
+    public Todo patchTodo(@RequestBody TodoDTO todoDTO) { return userServiceImpl.patchTodo(todoDTO); }
 
     // TODO: 8/8/2020 Mine
     @CrossOrigin

@@ -65,7 +65,7 @@ public class TodoServiceImpl implements TodoService {
     }
 
     // Throws Exceptions if not found
-    private Todo findTodoById(Long id) {
+    public Todo findTodoById(Long id) {
         Optional<Todo> optionalTodo = todoRepository.findById(id);
         if (optionalTodo.isPresent()){
             return optionalTodo.get();
@@ -73,13 +73,13 @@ public class TodoServiceImpl implements TodoService {
     }
 
     // Doesn't throw exceptions, its a helper method. If exists, return true, if not then false
-    private boolean checkTodoById(Long id) {
+    public boolean checkTodoById(Long id) {
         Optional<Todo> optionalTodo = todoRepository.findById(id);
         return optionalTodo.isPresent();
     }
 
     // Checks if user's ids match between
-    private boolean checkIfTodoIdAndUsernameFit(Todo todo, User user){
+    public boolean checkIfTodoIdAndUsernameFit(Todo todo, User user){
         return todo.getUser().getId().equals(user.getId());
     }
 
