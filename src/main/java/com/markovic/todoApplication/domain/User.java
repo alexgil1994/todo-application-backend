@@ -55,6 +55,11 @@ public class User implements UserDetails {
 
     private String[] user_authorities;
 
+    // For Brute force attack purposes
+    private int num_of_attempts;
+    private Date first_failed_attempt_time;
+    private boolean last_attempt_succeed;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     @JsonIgnore
     private Set<Todo> todoSet = new HashSet<>();
@@ -88,7 +93,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet, Set<Stigma> stigmaSet) {
+    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet, Set<Stigma> stigmaSet, int num_of_attempts, Date first_failed_attempt_time, boolean last_attempt_succeed) {
         this.id = id;
         this.uuid = uuid;
         this.first_name = first_name;
@@ -144,20 +149,18 @@ public class User implements UserDetails {
         return username;
     }
 
-    // We are not using this in our app logic but needed from UserDetails
+    // We are not using these 3 in our app logic but needed from UserDetails and being used from jwt authentication. We use different vars for brute force attack protection
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
-
     @Override
     public boolean isAccountNonLocked() {
         return is_not_locked;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
@@ -253,6 +256,18 @@ public class User implements UserDetails {
     public void setUser_authorities(String[] user_authorities) {
         this.user_authorities = user_authorities;
     }
+
+    public int getNum_of_attempts() { return num_of_attempts; }
+
+    public void setNum_of_attempts(int num_of_attempts) { this.num_of_attempts = num_of_attempts; }
+
+    public Date getFirst_failed_attempt_time() { return first_failed_attempt_time; }
+
+    public void setFirst_failed_attempt_time(Date first_failed_attempt_time) { this.first_failed_attempt_time = first_failed_attempt_time; }
+
+    public boolean isLast_attempt_succeed() { return last_attempt_succeed; }
+
+    public void setLast_attempt_succeed(boolean last_attempt_succeed) { this.last_attempt_succeed = last_attempt_succeed; }
 
     public Set<Todo> getTodoSet() {
         return todoSet;

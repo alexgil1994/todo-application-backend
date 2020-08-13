@@ -11,6 +11,7 @@ import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -101,10 +102,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return userRepository.save(newUser);
     }
 
-    // TODO: 8/8/2020 FIXXX StackOverFlowError: null when trying to login while permitting all links
     @Override
     public ResponseEntity<User> login(String username, String password, String email, String ip) {
-        // TODO: 8/10/2020 authenticate() throws the stackoverflaw error
         authenticate(username, password);
         User existingUser = findUserByUsername(username);
         // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
@@ -113,14 +112,58 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
     }
 
+    // TODO: 8/12/2020 Check if implemented extras for Brute force attacking security is well used  - (the only method used by the course is the authenticationManager.authenticate(...)
+    private void authenticate(String username, String password) {
+        try {
+            if (checkIfUserIsNotLocked(username)){
+                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+                loginAttemptSuccededClearing(username);
+            } else throw new RuntimeException("User with username of: " + username + " is locked for 10 minutes because of failing attempts.");
+        }catch (Exception e){
+            secureUserFromBruteForceAttack(username);
+            throw e;
+        }
+    }
+
+    // TODO: 8/12/2020 Test
+    // Setting user's params for brute force attack as negative
+    private void loginAttemptSuccededClearing(String username) {
+        User existingUser = findUserByUsername(username);
+        existingUser.setNum_of_attempts(0);
+        existingUser.setLast_attempt_succeed(true);
+        existingUser.setFirst_failed_attempt_time(null);
+        userRepository.save(existingUser);
+    }
+
+    // TODO: 8/12/2020 Test
+    // Brute force securing the system from the User
+    private void secureUserFromBruteForceAttack(String username) {
+        User existingUser = findUserByUsername(username);
+        existingUser.setLast_attempt_succeed(false);
+        // If first failed attempt time is null Or first failed attempt time is more than 15 minutes from now
+        if (existingUser.getFirst_failed_attempt_time() == null
+                || DateUtils.addMinutes(existingUser.getFirst_failed_attempt_time(), 15).compareTo(new Date()) > 0){
+            existingUser.setIs_not_locked(true);
+            existingUser.setNum_of_attempts(1);
+            existingUser.setFirst_failed_attempt_time(new Date());
+        } else existingUser.setNum_of_attempts(existingUser.getNum_of_attempts() + 1);
+        // Locking the user if number of failed attempts is 5 and first failed attempt is less than 15 minutes
+        if (existingUser.getNum_of_attempts() == 5
+                && DateUtils.addMinutes(existingUser.getFirst_failed_attempt_time(), 15).compareTo(new Date()) < 0) existingUser.setIs_not_locked(false);
+        userRepository.save(existingUser);
+    }
+
+    // TODO: 8/12/2020 Test
+    private boolean checkIfUserIsNotLocked(String username) {
+        // Does the checks
+        User existingUser = findUserByUsername(username);
+        return existingUser.getIs_not_locked();
+    }
+
     private HttpHeaders getJwtHeader(User existingUser) {
         HttpHeaders headers = new HttpHeaders();
         headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(existingUser));
         return headers;
-    }
-
-    private void authenticate(String username, String password) {
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
     // Checking if ip is null
@@ -197,7 +240,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
-
+    // TODO: 8/12/2020 Check where it is being used probably from spring security
     // For authentication
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

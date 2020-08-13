@@ -40,7 +40,6 @@ public class UserController {
         return userServiceImpl.patchUsernameOfUser(userDTO);
     }
 
-    // TODO: 8/10/2020 Fix StackOverflowError: null
     @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody UserDTO userDTO){

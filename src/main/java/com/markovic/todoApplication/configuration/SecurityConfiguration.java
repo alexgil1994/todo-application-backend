@@ -56,9 +56,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     // We need to define this extra bean
+    // TODO: 8/13/2020 Info : It has to be authenticationManagerBean and not authenticationManager otherwise it throws StackOverflow Error.
     @Bean
     @Override
-    public AuthenticationManager authenticationManager() throws Exception {
+    public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
 }
