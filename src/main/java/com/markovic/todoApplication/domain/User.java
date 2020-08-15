@@ -47,9 +47,9 @@ public class User implements UserDetails {
 
     private Date last_login_date_display;
 
-    private Boolean is_enabled;
+    private boolean is_enabled;
 
-    private Boolean is_not_locked;
+    private boolean is_not_locked;
 
     private String user_role;
 
@@ -225,19 +225,19 @@ public class User implements UserDetails {
         this.last_login_date_display = last_login_date_display;
     }
 
-    public Boolean getIs_enabled() {
+    public boolean getIs_enabled() {
         return is_enabled;
     }
 
-    public void setIs_enabled(Boolean is_enabled) {
+    public void setIs_enabled(boolean is_enabled) {
         this.is_enabled = is_enabled;
     }
 
-    public Boolean getIs_not_locked() {
+    public boolean getIs_not_locked() {
         return is_not_locked;
     }
 
-    public void setIs_not_locked(Boolean is_not_locked) {
+    public void setIs_not_locked(boolean is_not_locked) {
         this.is_not_locked = is_not_locked;
     }
 
