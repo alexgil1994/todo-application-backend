@@ -29,9 +29,8 @@ public class EmailService {
     private Message newUserEmail(String username, String email) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress(FROM_EMAIL));
-        // TODO: 8/15/2020 -------- InternetAddress needs to be FIXED!
-//        message.setRecipient(TO, InternetAddress.parse(email, false));
-//        message.setRecipient(TO, InternetAddress.parse(CC_EMAIL, false));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(EMAIL_SUBJECT);
         message.setText("Hello " + username + ", you are successfully registered to the Todo Application \n \n Todo Application Support team");
         return message;
@@ -49,9 +48,8 @@ public class EmailService {
     private Message userNewActivity(String username, String email, Stigma stigma) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress(FROM_EMAIL));
-        // TODO: 8/15/2020 -------- InternetAddress needs to be FIXED!
-//        message.setRecipient(TO, InternetAddress.parse(email, false));
-//        message.setRecipient(TO, InternetAddress.parse(CC_EMAIL, false));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
+        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(EMAIL_SUBJECT);
         message.setText("Hello " + username + ", you have successfully registered to the Todo Application from a new device - ip, if the activity wasn't by you please secure your account by changing your password and if needed contact us. \n \n Todo Application Support team");
         return message;
