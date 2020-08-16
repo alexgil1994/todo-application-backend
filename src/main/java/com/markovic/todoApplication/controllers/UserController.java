@@ -3,6 +3,8 @@ package com.markovic.todoApplication.controllers;
 import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.services.UserServiceImpl;
+import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
+import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
 import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,20 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
         return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
+    }
+
+    // TODO: 8/16/2020 Implement the service
+    @CrossOrigin
+    @PostMapping("/updatePassword")
+    public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO){
+        return userServiceImpl.updatePassword(updatePasswordUserDTO);
+    }
+
+    // TODO: 8/16/2020 Implement the service and email
+    @CrossOrigin
+    @PostMapping("/resetPassword")
+    public void resetPassword(@RequestBody ResetPasswordUserDTO resetPasswordUserDTO){
+        userServiceImpl.resetPassword(resetPasswordUserDTO);
     }
 
     @CrossOrigin

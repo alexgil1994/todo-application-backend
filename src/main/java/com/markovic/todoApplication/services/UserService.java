@@ -2,6 +2,8 @@ package com.markovic.todoApplication.services;
 
 import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
+import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
+import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
 import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.data.domain.Page;
@@ -44,4 +46,8 @@ public interface UserService {
     Todo patchTodo(TodoDTO todoDTO);
 
     User patchUsernameOfUser(UserDTO userDTO);
+
+    User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO);
+
+    void resetPassword(ResetPasswordUserDTO resetPasswordUserDTO);
 }

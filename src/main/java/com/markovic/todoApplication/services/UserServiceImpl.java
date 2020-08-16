@@ -7,6 +7,8 @@ import com.markovic.todoApplication.repositories.StigmaRepository;
 import com.markovic.todoApplication.repositories.TodoRepository;
 import com.markovic.todoApplication.repositories.UserRepository;
 import com.markovic.todoApplication.utility.JWTTokenProvider;
+import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
+import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
 import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -23,12 +25,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 import static com.markovic.todoApplication.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static com.markovic.todoApplication.enumeration.Role.ROLE_USER;
@@ -112,7 +112,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public ResponseEntity<User> login(String username, String password, String email, String ip) {
         authenticate(username, password);
         User existingUser = findUserByUsername(username);
-        // TODO: 8/16/2020  
+        // TODO: 8/16/2020
 //        checkUserActivity(existingUser, ip);
         HttpHeaders jwtHeader = getJwtHeader(existingUser);
         return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
@@ -311,6 +311,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             existingUser.setEmail(userDTO.getEmail());
             return existingUser;
         } else throw new RuntimeException("Username param was either empty, blank or User didn't exist in the db with such.");
+    }
+
+    // TODO: 8/16/2020 --Implement it
+    @Override
+    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) {
+        //        auth
+        User existingUser = findUserByUsername(updatePasswordUserDTO.getUsername());
+        //        User existingUser = find
+        return existingUser;
+    }
+
+    // TODO: 8/16/2020 --Implement it , by sending an Email better either by sending him a new password and setting in the db the new encrypted password or by another way.
+    @Override
+    public void resetPassword(ResetPasswordUserDTO resetPasswordUserDTO) {
+
     }
 
     @Override
