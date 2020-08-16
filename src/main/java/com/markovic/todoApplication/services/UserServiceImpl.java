@@ -11,7 +11,6 @@ import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -21,10 +20,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +59,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private JWTTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private EmailService emailService;
 
 
     // TODO: 7/27/2020 He again uses a Constructor and autowiring him instead of this way
@@ -110,8 +112,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public ResponseEntity<User> login(String username, String password, String email, String ip) {
         authenticate(username, password);
         User existingUser = findUserByUsername(username);
-        // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
-        if (checkStigma(ip)) existingUser.addStigma(new Stigma(ip));
+        // TODO: 8/16/2020  
+//        checkUserActivity(existingUser, ip);
         HttpHeaders jwtHeader = getJwtHeader(existingUser);
         return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
     }
@@ -147,6 +149,26 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         HttpHeaders headers = new HttpHeaders();
         headers.add(JWT_TOKEN_HEADER, jwtTokenProvider.generateJwtToken(existingUser));
         return headers;
+    }
+
+    private void checkUserActivity(User existingUser, String ip) {
+        // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
+//        if (checkStigma(ip) && !checkIfStigmaExistsInUserSet(ip, existingUser)) {
+//            // TODO: 8/16/2020 Check if existingUser needs also to be saved after addStigma
+//            existingUser.addStigma(new Stigma(ip));
+//            existingUser = userRepository.save(existingUser);
+//            try {
+//                emailService.sendUserNewActivity(existingUser.getUsername(), existingUser.getEmail(), ip);
+//            } catch (MessagingException e) {
+        // Not throwing the exception in case I couldn't send an email so that I don't stop the login completion
+        //                e.printStackTrace();
+//            }
+//         }
+    }
+    
+    // TODO: 8/16/2020 Impl for more than just ip
+    private boolean checkIfStigmaExistsInUserSet(String ip, User existingUser) {
+        return stigmaRepository.getStigmaByIpAndUserIs(ip, existingUser) != null;
     }
 
     // Checking if ip is null

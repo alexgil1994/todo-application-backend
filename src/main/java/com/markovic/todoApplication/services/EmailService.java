@@ -36,8 +36,8 @@ public class EmailService {
         return message;
     }
 
-    public void sendUserNewActivity(String username, String email, Stigma stigma) throws MessagingException {
-        Message message = userNewActivity(username, email, stigma);
+    public void sendUserNewActivity(String username, String email, String ip) throws MessagingException {
+        Message message = userNewActivity(username, email, ip);
         SMTPTransport smtptransport = (SMTPTransport) getEmailSession().getTransport(SIMPLE_MAIL_TRANSFER_PROTOCOL);
         smtptransport.connect(GMAIL_SMTP_SERVER, USERNAME, PASSWORD);
         smtptransport.sendMessage(message, message.getAllRecipients());
@@ -45,13 +45,13 @@ public class EmailService {
     }
 
     // TODO: 8/15/2020 Implement sending info about the new stigma too
-    private Message userNewActivity(String username, String email, Stigma stigma) throws MessagingException {
+    private Message userNewActivity(String username, String email, String ip) throws MessagingException {
         Message message = new MimeMessage(getEmailSession());
         message.setFrom(new InternetAddress(FROM_EMAIL));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(CC_EMAIL, false));
         message.setSubject(EMAIL_SUBJECT);
-        message.setText("Hello " + username + ", you have successfully registered to the Todo Application from a new device - ip, if the activity wasn't by you please secure your account by changing your password and if needed contact us. \n \n Todo Application Support team");
+        message.setText("Hello " + username + ", you have successfully registered to the Todo Application from a new device - ip " + ip + ", if the activity wasn't by you please secure your account by changing your password and if needed contact us. \n \n Todo Application Support team");
         return message;
     }
 

@@ -14,4 +14,7 @@ public interface StigmaRepository extends CrudRepository<Stigma, Long> {
     @Query
     Set<Stigma> getStigmaListByUserIs(User user);
 
+    // TODO: 8/16/2020 Check if it works
+    @Query(value = "SELECT STIGMA FROM stigma WHERE ip = ?1 AND user_id = ?2")
+    Stigma getStigmaByIpAndUserIs(String ip, User existingUser);
 }
