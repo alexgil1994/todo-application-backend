@@ -2,6 +2,7 @@ package com.markovic.todoApplication.listener;
 
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.UserRepository;
+import com.markovic.todoApplication.services.LoginAttemptService;
 import com.markovic.todoApplication.services.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -14,19 +15,24 @@ import java.util.concurrent.ExecutionException;
 public class AuthenticationSuccessListener {
 
     @Autowired
-    private UserRepository userRepository;
+    private LoginAttemptService loginAttemptService;
 
-    @Autowired
-    private UserServiceImpl userServiceImpl;
+    // Mine
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Autowired
+//    private UserServiceImpl userServiceImpl;
 
     @EventListener
     public void onAuthenticationSuccess(AuthenticationSuccessEvent event) throws ExecutionException {
         Object principal = event.getAuthentication().getPrincipal();
         // Checking if what we are getting from the authentication is a String because we use username
-        if (principal instanceof String) {
-            String username = (String) event.getAuthentication().getPrincipal();
+        if (principal instanceof User) {
+            User user = (User) event.getAuthentication().getPrincipal();
+            loginAttemptService.evictUserFromLoginAttemptCache(user.getUsername());
             // Mine
-            userServiceImpl.loginAttemptSuccededClearing(username);
+//            userServiceImpl.loginAttemptSuccededClearing(username);
         }
     }
 }

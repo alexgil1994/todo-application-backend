@@ -51,6 +51,12 @@
 			<artifactId>commons-lang3</artifactId>
 			<version>3.11</version>
 		</dependency>
+		<!-- Google Guava caching -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>28.1-jre</version>
+		</dependency>
 		<!-- Mail dependency -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>

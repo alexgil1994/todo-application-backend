@@ -2,6 +2,7 @@ package com.markovic.todoApplication.listener;
 
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.UserRepository;
+import com.markovic.todoApplication.services.LoginAttemptService;
 import com.markovic.todoApplication.services.UserServiceImpl;
 import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,14 @@ import java.util.concurrent.ExecutionException;
 public class AuthenticationFailureListener {
 
     @Autowired
-    private UserRepository userRepository;
+    private LoginAttemptService loginAttemptService;
 
-    @Autowired
-    private UserServiceImpl userServiceImpl;
+    // Mine
+//    @Autowired
+//    private UserRepository userRepository;
+//
+//    @Autowired
+//    private UserServiceImpl userServiceImpl;
 
     @EventListener
     public void onAuthenticationFailure(AuthenticationFailureBadCredentialsEvent event) throws ExecutionException {
@@ -28,8 +33,9 @@ public class AuthenticationFailureListener {
         // Checking if what we are getting from the authentication is a String because we use username
         if (principal instanceof String) {
             String username = (String) event.getAuthentication().getPrincipal();
+            loginAttemptService.addUserToLoginAttemptCache(username);
             // Mine
-            userServiceImpl.secureUserFromBruteForceAttack(username);
+//            userServiceImpl.secureUserFromBruteForceAttack(username);
         }
     }
 }

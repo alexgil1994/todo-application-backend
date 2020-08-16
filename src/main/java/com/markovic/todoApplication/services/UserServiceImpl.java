@@ -29,6 +29,7 @@ import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 import static com.markovic.todoApplication.constant.SecurityConstant.JWT_TOKEN_HEADER;
 import static com.markovic.todoApplication.enumeration.Role.ROLE_USER;
@@ -53,6 +54,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private LoginAttemptService loginAttemptService;
 
     @Autowired
     private JWTTokenProvider jwtTokenProvider;
@@ -112,74 +116,31 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
     }
 
-    // TODO: 8/14/2020 --------- DOESN'T WORK AS EXPECTED. ALSO I NEED TO HAVE IN BOTH SERVICE AND IN THE EVENTS WHICH IS WEIRD - IF I HAVE IT ONLY HERE OR ONLY THERE IT DOESNT WORK. WHEN IT GOES TO ATTEMPTS = 5 THEN IT DOESNT CHANGE ISNOTLOCKED TO FALSE AS I SPECIFY. ALSO I NEED AFTER I FIX , TO ALSO ALSO CHECK THE TIME PERIOD WHEN ISNOTLOCKED IS FALSE.
+    // All the checks happen through it using automatically the loadUserByUsername()
     private void authenticate(String username, String password) {
-//        try {
-        // Checking if user shouldn't be locked
-        checkIfUserShouldntBeLocked(username);
-        // Checking if User is locked and first failed attempt is in the last 10 minutes then no authorization is happening
-        if (checkIfUserIsNotLocked(username)){
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            loginAttemptSuccededClearing(username);
-        } else throw new RuntimeException("User with username of: " + username + " is locked for 10 minutes because of failing attempts.");
-//        secureUserFromBruteForceAttack(username);
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
-    private void checkIfUserShouldntBeLocked(String username) {
-        if (!checkIfUserIsNotLocked(username) && firstFailedAttemptIn10Minutes(username)){
-            User existingUser = findUserByUsername(username);
-            existingUser.setIs_not_locked(true);
-            // We define it 0 so that the next time the user will fail he wont be instantly locked for another 10 minutes but he will have another 5 chances
-            existingUser.setNum_of_attempts(0);
-            userRepository.save(existingUser);
-        }
-    }
-
-    private boolean firstFailedAttemptIn10Minutes(String username) {
+    // ** For authentication used by Spring Security to load the user and manipulating it to secure from Brute Force Attack
+    @Override
+    public UserDetails loadUserByUsername(String username) {
         User existingUser = findUserByUsername(username);
-        return DateUtils.addMinutes(existingUser.getFirst_failed_attempt_time(), 10).compareTo(new Date()) < 0;
+        validateAttempt(existingUser);
+        // Setting the displaying to be the previously last login date and changing the last login date to be now
+        existingUser.setLast_login_date_display(existingUser.getLast_login_date());
+        existingUser.setLast_login_date(new Date());
+        // Saving the user and returning a UserDetails user
+        return userRepository.save(existingUser);
+
     }
 
-    // TODO: 8/12/2020 Test
-    // Setting user's params for brute force attack as negative
-    public void loginAttemptSuccededClearing(String username) {
-        User existingUser = findUserByUsername(username);
-        existingUser.setNum_of_attempts(0);
-        existingUser.setLast_attempt_succeed(true);
-        existingUser.setFirst_failed_attempt_time(null);
-        userRepository.save(existingUser);
-    }
-
-    // TODO: 8/12/2020 Test
-    // Brute force securing the system from the User
-    public void secureUserFromBruteForceAttack(String username) {
-        User existingUser = findUserByUsername(username);
-        existingUser.setLast_attempt_succeed(false);
-        // Locking the user if number of failed attempts is 5 and first failed attempt is less than 10 minutes
-        if (existingUser.getNum_of_attempts() >= 5
-                && DateUtils.addMinutes(existingUser.getFirst_failed_attempt_time(), 10).compareTo(new Date()) < 0) existingUser.setIs_not_locked(false);
-        // If first failed attempt time is null Or first failed attempt time is more than 10 minutes from now
-        if (existingUser.getFirst_failed_attempt_time() == null) {
-            existingUser.setIs_not_locked(true);
-            existingUser.setNum_of_attempts(existingUser.getNum_of_attempts() + 1);
-            existingUser.setFirst_failed_attempt_time(new Date());
-        }
-        // If first failed attempt isn't null and first failed attempt is in the last 10 minutes from now and num_attempts isn't >= 5
-        else if ( DateUtils.addMinutes(existingUser.getFirst_failed_attempt_time(), 10).compareTo(new Date()) > 0) {
-            existingUser.setIs_not_locked(true);
-            existingUser.setNum_of_attempts(existingUser.getNum_of_attempts() + 1);
-        }
-        // TODO: 8/15/2020 DOESN'T WORK -> I AM SAVING, JPA RETURNS CORRECT DATA BUT IN THE DB ACTUALLY NOTHING HAS CHANGED!
-        User returnedUser = userRepository.save(existingUser);
-    }
-
-    // TODO: 8/12/2020 Test
-    private boolean checkIfUserIsNotLocked(String username) {
-        // Does the checks
-        // TODO: 8/14/2020 I have to check here if it is in the last 15 minutes , if not then i should return not locked being false to try again to attempt for logins
-        User existingUser = findUserByUsername(username);
-
-        return existingUser.getIs_not_locked();
+    // Securing from Brute Force Attack
+    private void validateAttempt(User existingUser)  {
+        if (existingUser.getIs_not_locked()){
+            if (loginAttemptService.hasExceededMaxAttempts(existingUser.getUsername())) {
+                existingUser.setIs_not_locked(false);
+            } else existingUser.setIs_not_locked(true);
+        } else loginAttemptService.evictUserFromLoginAttemptCache(existingUser.getUsername());
     }
 
     private HttpHeaders getJwtHeader(User existingUser) {
@@ -261,23 +222,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-
-    // TODO: 8/12/2020 Check where it is being used probably from spring security
-    // For authentication
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
-        if (optionalUser.isPresent()){
-            User user = optionalUser.get();
-            // Setting the displaying to be the previously last login date and changing the last login date to be now
-            user.setLast_login_date_display(user.getLast_login_date());
-            user.setLast_login_date(new Date());
-            // Saving the user and returning a UserDetails user
-            return userRepository.save(user);
-        } else {
-            throw new UsernameNotFoundException("User not found by username: " + username);
-        }
-    }
 
 
     @Override
