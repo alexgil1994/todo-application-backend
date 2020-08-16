@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
+
 @RestController
 @RequestMapping(UserController.BASE_URL)
 public class UserController {
@@ -24,7 +26,7 @@ public class UserController {
     @CrossOrigin
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public User register(@RequestBody UserDTO userDTO){
+    public User register(@RequestBody UserDTO userDTO) throws MessagingException {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
@@ -48,10 +50,10 @@ public class UserController {
         return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
-    // TODO: 8/16/2020 Implement the service
+    // TODO: 8/16/2020 Implement the service AND SEE HOW TO SEND POST REQUEST WITH THE TOKEN TO HAVE ACCESS AS BEARER
     @CrossOrigin
     @PostMapping("/updatePassword")
-    public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO){
+    public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
         return userServiceImpl.updatePassword(updatePasswordUserDTO);
     }
 

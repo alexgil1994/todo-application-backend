@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.List;
 
 @Service
@@ -17,7 +18,7 @@ public interface UserService {
 
     User getById(Long id);
 
-    User register(String first_name, String last_name, String username, String password, String email, String ip);
+    User register(String first_name, String last_name, String username, String password, String email, String ip) throws MessagingException;
 
     ResponseEntity<User> login(String first_name, String last_name, String username, String password);
 
@@ -47,7 +48,7 @@ public interface UserService {
 
     User patchUsernameOfUser(UserDTO userDTO);
 
-    User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO);
+    User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException;
 
     void resetPassword(ResetPasswordUserDTO resetPasswordUserDTO);
 }

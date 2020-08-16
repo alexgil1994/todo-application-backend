@@ -3,11 +3,11 @@ package com.markovic.todoApplication.constant;
 public class EmailConstant {
     public static final String SIMPLE_MAIL_TRANSFER_PROTOCOL = "smtps";
     // TODO: 8/15/2020 username and pass
-    public static final String USERNAME = "**";
-    public static final String PASSWORD = "**";
-    public static final String FROM_EMAIL = "alexgil2000@hotmail.com";
+    public static final String USERNAME = "testforapplications1212";
+    public static final String PASSWORD = "testingapplications12345";
+    public static final String FROM_EMAIL = "testforapplications1212@gmail.com";
     public static final String CC_EMAIL = "";
-    public static final String EMAIL_SUBJECT = "Todo Application, Markovic || Change Password";
+    public static final String EMAIL_SUBJECT = "Todo Application, Markovic || Change Password"; // Not really needed
     public static final String GMAIL_SMTP_SERVER = "smtp.gmail.com";
     public static final String SMTP_HOST = "mail.smtp.host";
     public static final String SMTP_AUTH = "mail.smtp.auth";

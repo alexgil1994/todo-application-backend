@@ -2,16 +2,14 @@ package com.markovic.todoApplication.v1.model;
 
 public class UpdatePasswordUserDTO {
     private String username;
-    private String email;
     private String old_password;
     private String new_password;
 
     public UpdatePasswordUserDTO() {
     }
 
-    public UpdatePasswordUserDTO(String username, String email, String old_password, String new_password) {
+    public UpdatePasswordUserDTO(String username, String old_password, String new_password) {
         this.username = username;
-        this.email = email;
         this.old_password = old_password;
         this.new_password = new_password;
     }
@@ -22,14 +20,6 @@ public class UpdatePasswordUserDTO {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getOld_password() {

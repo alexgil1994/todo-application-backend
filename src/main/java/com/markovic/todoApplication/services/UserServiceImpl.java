@@ -25,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
@@ -82,7 +83,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // TODO: 8/7/2020 Implement checking if the user already exists as ipUser and transfer
     // Registration method
     @Override
-    public User register(String first_name, String last_name, String username, String password, String email, String ip) {
+    public User register(String first_name, String last_name, String username, String password, String email, String ip) throws MessagingException {
         // Validating that a user with this username or email doesn't already exist
         validateNewUsernameAndEmail(username, email);
         User newUser = new User();
@@ -105,7 +106,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         newUser.setImage_url(null);
         // Checking if ip is blank, if not then creating a new Stigma, setting ip and connecting it with the user
         if (checkStigma(ip)) newUser.addStigma(new Stigma(ip));
-        return userRepository.save(newUser);
+        newUser = userRepository.save(newUser);
+        // TODO: 8/16/2020 Emailing
+        // emailService.sendNewUserEmail(newUser.getUsername(), newUser.getEmail());
+        return newUser;
     }
 
     @Override
@@ -113,7 +117,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         authenticate(username, password);
         User existingUser = findUserByUsername(username);
         // TODO: 8/16/2020
-//        checkUserActivity(existingUser, ip);
+        checkUserActivity(existingUser, ip); // Checks if it's a new device or ip and if so, adds it and sends email
         HttpHeaders jwtHeader = getJwtHeader(existingUser);
         return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
     }
@@ -152,18 +156,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     private void checkUserActivity(User existingUser, String ip) {
-        // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
-//        if (checkStigma(ip) && !checkIfStigmaExistsInUserSet(ip, existingUser)) {
-//            // TODO: 8/16/2020 Check if existingUser needs also to be saved after addStigma
-//            existingUser.addStigma(new Stigma(ip));
-//            existingUser = userRepository.save(existingUser);
+        if (checkStigma(ip) && !checkIfStigmaExistsInUserSet(ip, existingUser)) {
+            existingUser.addStigma(new Stigma(ip));
+            // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
 //            try {
 //                emailService.sendUserNewActivity(existingUser.getUsername(), existingUser.getEmail(), ip);
 //            } catch (MessagingException e) {
         // Not throwing the exception in case I couldn't send an email so that I don't stop the login completion
         //                e.printStackTrace();
 //            }
-//         }
+         }
     }
     
     // TODO: 8/16/2020 Impl for more than just ip
@@ -315,10 +317,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // TODO: 8/16/2020 --Implement it
     @Override
-    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) {
-        //        auth
+    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
         User existingUser = findUserByUsername(updatePasswordUserDTO.getUsername());
-        //        User existingUser = find
+        if (bCryptPasswordEncoder.encode(updatePasswordUserDTO.getOld_password()).equals(existingUser.getPassword()) // Checking vars
+                && StringUtils.isNotEmpty(updatePasswordUserDTO.getNew_password())
+                && StringUtils.isNotBlank(updatePasswordUserDTO.getNew_password())) {
+            String newPassword = bCryptPasswordEncoder.encode(updatePasswordUserDTO.getNew_password()); // Encoding the new password
+            existingUser.setPassword(newPassword);
+            existingUser = userRepository.save(existingUser);
+            // TODO: 8/16/2020
+            // emailService.sendUpdateUserPassword(existingUser.getUsername(), existingUser.getEmail()); // Informing the User that his password has been updated
+        }
         return existingUser;
     }
 
