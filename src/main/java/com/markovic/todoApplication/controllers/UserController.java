@@ -52,14 +52,14 @@ public class UserController {
 
     // TODO: 8/16/2020 Implement the service AND SEE HOW TO SEND POST REQUEST WITH THE TOKEN TO HAVE ACCESS AS BEARER
     @CrossOrigin
-    @PostMapping("/updatePassword")
+    @PatchMapping("/updatePassword")
     public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
         return userServiceImpl.updatePassword(updatePasswordUserDTO);
     }
 
     // TODO: 8/16/2020 Implement the service and email
     @CrossOrigin
-    @PostMapping("/resetPassword")
+    @PatchMapping("/resetPassword")
     public void resetPassword(@RequestBody ResetPasswordUserDTO resetPasswordUserDTO){
         userServiceImpl.resetPassword(resetPasswordUserDTO);
     }

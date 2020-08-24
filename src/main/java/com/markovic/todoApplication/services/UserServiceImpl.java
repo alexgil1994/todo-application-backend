@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         if (checkStigma(ip)) newUser.addStigma(new Stigma(ip));
         newUser = userRepository.save(newUser);
         // TODO: 8/16/2020 Emailing
-        // emailService.sendNewUserEmail(newUser.getUsername(), newUser.getEmail());
+//         emailService.sendNewUserEmail(newUser.getUsername(), newUser.getEmail());
         return newUser;
     }
 

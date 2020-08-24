@@ -80,7 +80,7 @@ public class EmailService {
         properties.put(SMTP_HOST, EmailConstant.GMAIL_SMTP_SERVER);
         properties.put(SMTP_AUTH, true);
         properties.put(SMTP_PORT, EmailConstant.DEFAULT_PORT);
-        // Commenting it maybe since I am not using yet ssl certificate
+        // Todo Commenting it maybe since I am not using yet ssl certificate
         properties.put(SMTP_STARTTLS_ENABLE, true);
         properties.put(SMTP_STARTTLS_REQUIRED, true);
         return Session.getInstance(properties, null);
