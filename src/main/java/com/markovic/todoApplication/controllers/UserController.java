@@ -2,6 +2,7 @@ package com.markovic.todoApplication.controllers;
 
 import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
+import com.markovic.todoApplication.services.EmailService;
 import com.markovic.todoApplication.services.UserServiceImpl;
 import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
 import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
@@ -23,11 +24,23 @@ public class UserController {
     @Autowired
     private UserServiceImpl userServiceImpl;
 
+    @Autowired
+    private EmailService emailService;
+
+
     @CrossOrigin
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
     public User register(@RequestBody UserDTO userDTO) throws MessagingException {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
+    }
+
+    // TODO: 9/1/2020 Testing
+    @CrossOrigin
+    @PostMapping("/email")
+    @ResponseStatus(HttpStatus.OK)
+    public void checkEmail(@RequestBody UserDTO userDTO) {
+        emailService.sendNewUserEmail(userDTO.getUsername(), userDTO.getEmail());
     }
 
     @CrossOrigin

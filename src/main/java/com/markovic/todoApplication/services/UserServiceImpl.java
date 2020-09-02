@@ -107,8 +107,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         // Checking if ip is blank, if not then creating a new Stigma, setting ip and connecting it with the user
         if (checkStigma(ip)) newUser.addStigma(new Stigma(ip));
         newUser = userRepository.save(newUser);
-        // TODO: 8/16/2020 Emailing
-//         emailService.sendNewUserEmail(newUser.getUsername(), newUser.getEmail());
+        try {
+            emailService.sendNewUserEmail(newUser.getUsername(), newUser.getEmail());
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
         return newUser;
     }
 
@@ -155,16 +158,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return headers;
     }
 
+    // Checking if user's stigma already exists, otherwise we inform with an email
     private void checkUserActivity(User existingUser, String ip) {
         if (checkStigma(ip) && !checkIfStigmaExistsInUserSet(ip, existingUser)) {
             existingUser.addStigma(new Stigma(ip));
-            // TODO: 8/10/2020 Implement to also send an email if the ip doesn't already exist as a Stigma
-//            try {
-//                emailService.sendUserNewActivity(existingUser.getUsername(), existingUser.getEmail(), ip);
-//            } catch (MessagingException e) {
-        // Not throwing the exception in case I couldn't send an email so that I don't stop the login completion
-        //                e.printStackTrace();
-//            }
+            try {
+                emailService.sendUserNewActivity(existingUser.getUsername(), existingUser.getEmail(), ip);
+            } catch (Exception e) {
+//              Not throwing the exception in case I couldn't send an email so that I don't stop the login completion
+//              e.printStackTrace();
+            }
          }
     }
     
@@ -317,7 +320,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // TODO: 8/16/2020 --Implement it
     @Override
-    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
+    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) {
         User existingUser = findUserByUsername(updatePasswordUserDTO.getUsername());
         if (bCryptPasswordEncoder.encode(updatePasswordUserDTO.getOld_password()).equals(existingUser.getPassword()) // Checking vars
                 && StringUtils.isNotEmpty(updatePasswordUserDTO.getNew_password())
@@ -325,8 +328,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             String newPassword = bCryptPasswordEncoder.encode(updatePasswordUserDTO.getNew_password()); // Encoding the new password
             existingUser.setPassword(newPassword);
             existingUser = userRepository.save(existingUser);
-            // TODO: 8/16/2020
-            // emailService.sendUpdateUserPassword(existingUser.getUsername(), existingUser.getEmail()); // Informing the User that his password has been updated
+            try {
+                emailService.sendUpdateUserPasswordOccurred(existingUser.getUsername(), existingUser.getEmail()); // Informing the User that his password has been updated
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return existingUser;
     }

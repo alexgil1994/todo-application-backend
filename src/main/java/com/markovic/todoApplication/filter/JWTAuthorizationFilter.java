@@ -44,6 +44,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             String token = authorizationHeader.substring(SecurityConstant.TOKEN_PREFIX.length());
             String username = jwtTokenProvider.getSubject(token);
             // Checking if token is valid and if the user doesn't already have an authentication in the Spring Security Context
+            // TODO: 9/2/2020 Reconsider if SecurityContextHolder.getContext().getAuthentication() == null is what I want as a behavior
             if (jwtTokenProvider.isTokenValid(username, token) && SecurityContextHolder.getContext().getAuthentication() == null){
                 List<GrantedAuthority> authorities = jwtTokenProvider.getAuthorities(token);
                 // Getting the Authentication

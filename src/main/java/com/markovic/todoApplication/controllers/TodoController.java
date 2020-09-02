@@ -18,6 +18,8 @@ public class TodoController {
     @Autowired
     private TodoServiceImpl todoService;
 
+    // TODO: 8/26/2020 Change so that the addnew and patch will be through here instead of user controller
+
 
     // TODO: 8/8/2020 Mine
     @CrossOrigin

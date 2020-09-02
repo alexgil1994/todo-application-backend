@@ -18,6 +18,9 @@ public class StigmaController {
     @Autowired
     private StigmaServiceImpl stigmaService;
 
+    // TODO: 8/26/2020 Change so that the addnew and patch will be through here instead of user controller
+
+
     // TODO: 8/8/2020 Mine
     @CrossOrigin
     @DeleteMapping("/deleteStigmaByIdAndUsername")
@@ -26,7 +29,7 @@ public class StigmaController {
         stigmaService.deleteStigma(id, username);
     }
 
-    // TODO: 8/8/2020 Mine
+    // TODO: 8/8/2020 Could only be changed to not show all the user information that are attached to the Stigma's User
     @CrossOrigin
     @GetMapping("/getAllStigmasByUsername")
     @ResponseStatus(HttpStatus.OK)
