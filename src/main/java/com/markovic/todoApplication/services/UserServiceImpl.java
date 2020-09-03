@@ -24,9 +24,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -79,6 +79,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
+    // TODO: 9/3/2020 ---Implement in the register to send an email to the user creating a link as http://localhost:8080/user/verifyEmail/{token} sending the token through in the link and having an endpoint where I will verify the token to verify the email activating this way in the end the new user.
 
     // TODO: 8/7/2020 Implement checking if the user already exists as ipUser and transfer
     // Registration method
@@ -117,12 +118,20 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public ResponseEntity<User> login(String username, String password, String email, String ip) {
-        authenticate(username, password);
-        User existingUser = findUserByUsername(username);
-        // TODO: 8/16/2020
-        checkUserActivity(existingUser, ip); // Checks if it's a new device or ip and if so, adds it and sends email
-        HttpHeaders jwtHeader = getJwtHeader(existingUser);
-        return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
+        User existingUser;
+        if (StringUtils.isNotEmpty(username) && StringUtils.isNotBlank(username)) { // Checking if the User didn't remember username
+            authenticate(username, password);
+            existingUser = findUserByUsername(username);
+            checkUserActivity(existingUser, ip); // Checks if it's a new device or ip and if so, adds it and sends email
+            HttpHeaders jwtHeader = getJwtHeader(existingUser);
+            return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
+        } else if (StringUtils.isNotEmpty(email) && StringUtils.isNotBlank(email)){ // If User didn't give username for login but did give email and password
+            existingUser = findUserByEmail(email);
+            authenticate(existingUser.getUsername(), password);
+            checkUserActivity(existingUser, ip); // Checks if it's a new device or ip and if so, adds it and sends email
+            HttpHeaders jwtHeader = getJwtHeader(existingUser);
+            return new ResponseEntity<>(existingUser, jwtHeader, HttpStatus.OK);
+        } else throw new RuntimeException("The User didn't give neither username nor email for the authentication");
     }
 
     // All the checks happen through it using automatically the loadUserByUsername()
@@ -250,14 +259,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
-
+    // TODO: 9/3/2020 Impl
     @Override
     public Page<User> getAllByPaging(Integer page) {
         return null;
     }
 
 
-    // TODO: 7/14/2020 Implement the rest of the methods
+    // TODO: 7/14/2020 Impl
     @Override
     public User addUser(UserDTO userDTO) {
         return null;
@@ -283,6 +292,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     // TODO: 8/11/2020 --How to make it SECURE knowing surely that the user that triggers the request is actually the one that asks the request and not someone else that by-passed (got it somehow) JWT token. --Could be with actually checking the token de-encrypting it to see the actual username (Learn how to do this also manually (Spring security does it as well))
+    //  ---Could be solved by using preAuthorize annotation in the controller that the username is == with the authentication context username.
     @Override
     public User patchUser(UserDTO userDTO) {
         // Throwing exceptions in the method
@@ -337,10 +347,22 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return existingUser;
     }
 
-    // TODO: 8/16/2020 --Implement it , by sending an Email better either by sending him a new password and setting in the db the new encrypted password or by another way.
     @Override
     public void resetPassword(ResetPasswordUserDTO resetPasswordUserDTO) {
-
+        User existingUser; // Checking if the User exists based on either the username or the email
+        if (StringUtils.isNotEmpty(resetPasswordUserDTO.getUsername()) && StringUtils.isNotBlank(resetPasswordUserDTO.getUsername())) {
+            existingUser = findUserByUsername(resetPasswordUserDTO.getUsername());
+        } else if (StringUtils.isNotEmpty(resetPasswordUserDTO.getEmail()) && StringUtils.isNotBlank(resetPasswordUserDTO.getEmail())){
+            existingUser = findUserByEmail(resetPasswordUserDTO.getEmail());
+        } else throw new RuntimeException("There was no User found with the specified username or email");
+        String newPassword = RandomStringUtils.randomAlphanumeric(10); // Creating the new password, encrypting it and saving the user to the db
+        existingUser.setPassword(bCryptPasswordEncoder.encode(newPassword));
+        try {
+            User returnedUser = userRepository.save(existingUser);
+            emailService.sendResetNewPassword(returnedUser.getUsername(), returnedUser.getEmail(), newPassword); // Sending to the User the new password through his email
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

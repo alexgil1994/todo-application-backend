@@ -18,6 +18,15 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    // When User logs in through a different device or ip
+    public void sendUserNewActivity(String username, String email, String ip) {
+        JavaMailSenderImpl mailSender = getEmailSession();
+        SimpleMailMessage message = buildMessage("New User Activity",
+                "Hello " + username + ", you have successfully registered to the Todo Application from a new device - ip " + ip + ", if the activity wasn't by you please secure your account by changing your password and if needed contact us. \n \n TodoApp Application Team",
+                email);
+        mailSender.send(message);
+    }
+
     // When User updates his password while being logged in
     public void sendUpdateUserPasswordOccurred(String username, String email) {
         JavaMailSenderImpl mailSender = getEmailSession();
@@ -27,11 +36,10 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    // When User logs in through a different device or ip
-    public void sendUserNewActivity(String username, String email, String ip) {
+    public void sendResetNewPassword(String username, String email, String newPassword){
         JavaMailSenderImpl mailSender = getEmailSession();
-        SimpleMailMessage message = buildMessage("New User Activity",
-                "Hello " + username + ", you have successfully registered to the Todo Application from a new device - ip " + ip + ", if the activity wasn't by you please secure your account by changing your password and if needed contact us. \n \n TodoApp Application Team",
+        SimpleMailMessage message = buildMessage("Informing about password resetting",
+                "Hello " + username + ", you have requested to reset your password of the Todo Application account. Your new password is " + newPassword + ". If this action wasn't made by you please look into your account information. \n \n TodoApp Application Team",
                 email);
         mailSender.send(message);
     }
