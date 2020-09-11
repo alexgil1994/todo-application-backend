@@ -1,19 +1,20 @@
 package com.markovic.todoApplication.controllers;
 
-import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.services.EmailService;
 import com.markovic.todoApplication.services.UserServiceImpl;
 import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
 import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
-import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.util.List;
 
 @RestController
 @RequestMapping(UserController.BASE_URL)
@@ -35,17 +36,34 @@ public class UserController {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
-    // TODO: 9/1/2020 Testing
     @CrossOrigin
-    @PostMapping("/email")
-    @ResponseStatus(HttpStatus.OK)
-    public void checkEmail(@RequestBody UserDTO userDTO) {
-        emailService.sendNewUserEmail(userDTO.getUsername(), userDTO.getEmail());
+    @PostMapping("/login")
+    public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
+        return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
+
+    @CrossOrigin
+    @GetMapping("/findUserByUsername")
+    @ResponseStatus(HttpStatus.OK)
+    public User findUser(@RequestParam String username){ return userServiceImpl.findUserByUsername(username); }
+
+    @CrossOrigin
+    @GetMapping("/findUserById")
+    @ResponseStatus(HttpStatus.OK)
+    public User findUser(@RequestParam Long id){ return userServiceImpl.findUserById(id); }
+
+//    // TODO: 9/1/2020 Testing only
+//    @CrossOrigin
+//    @PostMapping("/email")
+//    @ResponseStatus(HttpStatus.OK)
+//    public void checkEmail(@RequestBody UserDTO userDTO) {
+//        emailService.sendNewUserEmail(userDTO.getUsername(), userDTO.getEmail());
+//    }
 
     @CrossOrigin
     @PatchMapping("/patchUser")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#userDTO.username == principal.username")
     public User patchUser(@RequestBody UserDTO userDTO){
         return userServiceImpl.patchUser(userDTO);
     }
@@ -53,48 +71,78 @@ public class UserController {
     @CrossOrigin
     @PatchMapping("/patchUsernameOfUser")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#userDTO.username == principal.username")
     public User patchUsernameOfUser(@RequestBody UserDTO userDTO){
         return userServiceImpl.patchUsernameOfUser(userDTO);
     }
 
     @CrossOrigin
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
-        return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
-    }
-
-    // TODO: 8/16/2020 Implement the service AND SEE HOW TO SEND POST REQUEST WITH THE TOKEN TO HAVE ACCESS AS BEARER
-    @CrossOrigin
     @PatchMapping("/updatePassword")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#updatePasswordUserDTO.username == principal.username")
     public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
         return userServiceImpl.updatePassword(updatePasswordUserDTO);
     }
 
-    // TODO: 8/16/2020 Implement the service and email
     @CrossOrigin
     @PatchMapping("/resetPassword")
+    @ResponseStatus(HttpStatus.OK)
     public void resetPassword(@RequestBody ResetPasswordUserDTO resetPasswordUserDTO){
         userServiceImpl.resetPassword(resetPasswordUserDTO);
     }
 
+    // TODO: 9/6/2020 Test
     @CrossOrigin
-    @PostMapping("/addNewTodo")
+    @PostMapping("/promoteUserToAdmin")
     @ResponseStatus(HttpStatus.OK)
-    public Todo addNewTodo(@RequestBody TodoDTO todoDTO){
-        return userServiceImpl.addNewTodo(todoDTO);
+    @PreAuthorize("#username == principal.username")
+    public void promoteUserToAdmin(@RequestParam String username){ userServiceImpl.promoteUserToAdmin(username); }
+
+    // TODO: 9/6/2020 Test
+    @CrossOrigin
+    @PostMapping("/registerNewUserByAdmin")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public User registerNewUserByAdmin(@RequestBody UserDTO userDTO){
+        return userServiceImpl.registerNewUserByAdmin(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getEmail());
     }
 
+    // TODO: 9/6/2020 Test
     @CrossOrigin
-    @PatchMapping("/patchTodo")
+    @PostMapping("/registerNewAdminByAdmin")
     @ResponseStatus(HttpStatus.OK)
-    public Todo patchTodo(@RequestBody TodoDTO todoDTO) { return userServiceImpl.patchTodo(todoDTO); }
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public User registerNewAdminByAdmin(@RequestBody UserDTO userDTO){
+        return userServiceImpl.registerNewAdminByAdmin(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getEmail());
+    }
+
+    // TODO: 9/6/2020 DELETE USER BY ADMIN
+    @CrossOrigin
+    @DeleteMapping("/deleteUserByAdmin")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void deleteUserByAdmin(@RequestParam String username){
+        userServiceImpl.deleteUser(username);
+    }
 
     // TODO: 8/8/2020 Mine
     @CrossOrigin
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#username == principal.username")
     public void delete(@RequestParam String username){
         userServiceImpl.deleteUser(username);
     }
+
+    @CrossOrigin
+    @GetMapping("/getAllByPaging")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#username == principal.username")
+    public Page<User> getAllByPaging(@RequestParam String username, @RequestParam int page){ return userServiceImpl.getAllByPaging(page); }
+
+    @CrossOrigin
+    @GetMapping("/getUsers")
+    @ResponseStatus(HttpStatus.OK)
+    public List<User> getAllUsers(){ return userServiceImpl.getUsers(); }
 
 }

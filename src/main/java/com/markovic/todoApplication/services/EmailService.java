@@ -44,6 +44,24 @@ public class EmailService {
         mailSender.send(message);
     }
 
+    // When an Admin registers a new User
+    public void sendNewUserByAdminEmail(String username, String email, String password) {
+        JavaMailSenderImpl mailSender = getEmailSession();
+        SimpleMailMessage message = buildMessage("Welcome " + username + " to the TodoApp",
+                "We welcome you " + username + " to the TodoApp.\nYour generated password is: " + password + ".\nWe hope you like the services we carefully crafted for you. \n \n The TodoApp Team",
+                email);
+        mailSender.send(message);
+    }
+
+    // When an Admin registers a new User as Admin
+    public void sendNewAdminByAdminEmail(String username, String email, String password) {
+        JavaMailSenderImpl mailSender = getEmailSession();
+        SimpleMailMessage message = buildMessage("Welcome " + username + " to the TodoApp",
+                "We welcome you " + username + " to the TodoApp. \nYou have been granted Admin Role to the application. Your generated password is: " + password + ".\nWe hope you like the services we carefully crafted for you. \n \n The TodoApp Team",
+                email);
+        mailSender.send(message);
+    }
+
     // Basic message mail
     private SimpleMailMessage buildMessage(String subject, String text, String toMail){
         SimpleMailMessage message = new SimpleMailMessage();
@@ -64,11 +82,6 @@ public class EmailService {
         mailSender.setPassword(PASSWORD);
         return mailSender;
     }
-
-
-
-
-
 
 
 
@@ -108,7 +121,7 @@ public class EmailService {
 //        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email, false));
 //        message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(CC_EMAIL, false));
 //        message.setSubject("Informing about Password update occurred");
-//        message.setText("Hello " + username + ", you have successfully updated your password to the TodoApp Application. If this action wasn't made by you please look into your account information. \n \n Todo Application Support team");
+//        message.setText("Hello " + username + ", you have successfully updated your password to the TodoApp Application. If this action wasn't made by you please look into your account information. \n \n TodoApp Application Support team");
 //        return message;
 //    }
 //

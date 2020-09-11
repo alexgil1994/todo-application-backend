@@ -1,6 +1,7 @@
 package com.markovic.todoApplication.services;
 
 import com.markovic.todoApplication.domain.Todo;
+import com.markovic.todoApplication.v1.model.TodoDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -8,11 +9,15 @@ import java.util.Set;
 @Service
 public interface TodoService {
 
-    Todo getById(Long id);
+    Todo findTodoById(Long id);
 
-    Todo getByUuid(String uuid);
+    Todo findTodoByUuid(String uuid);
 
     Set<Todo> getTodoListByUsername(String username);
+
+    Todo addNewTodo(TodoDTO todoDTO);
+
+    Todo patchTodo(TodoDTO todoDTO);
 
     void deleteTodoById(Long id, String username);
 }

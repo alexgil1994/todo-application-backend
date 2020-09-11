@@ -5,6 +5,7 @@ import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.services.StigmaServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -18,13 +19,11 @@ public class StigmaController {
     @Autowired
     private StigmaServiceImpl stigmaService;
 
-    // TODO: 8/26/2020 Change so that the addnew and patch will be through here instead of user controller
 
-
-    // TODO: 8/8/2020 Mine
     @CrossOrigin
     @DeleteMapping("/deleteStigmaByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#username == principal.username")
     public void delete(@RequestParam Long id, @RequestParam String username){
         stigmaService.deleteStigma(id, username);
     }
@@ -33,6 +32,7 @@ public class StigmaController {
     @CrossOrigin
     @GetMapping("/getAllStigmasByUsername")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("#username == principal.username")
     public Set<Stigma> getStigmasByUsername(@RequestParam String username){
         return stigmaService.getStigmaListByUsername(username);
     }

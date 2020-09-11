@@ -1,7 +1,6 @@
 package com.markovic.todoApplication.services;
 
 import com.markovic.todoApplication.domain.Stigma;
-import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.StigmaRepository;
 import com.markovic.todoApplication.repositories.TodoRepository;
@@ -9,12 +8,14 @@ import com.markovic.todoApplication.repositories.UserRepository;
 import com.markovic.todoApplication.utility.JWTTokenProvider;
 import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
 import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
-import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,12 +27,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.mail.MessagingException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static com.markovic.todoApplication.constant.SecurityConstant.JWT_TOKEN_HEADER;
+import static com.markovic.todoApplication.enumeration.Role.ROLE_ADMIN;
 import static com.markovic.todoApplication.enumeration.Role.ROLE_USER;
 
 // We are using the qualifier to set another name for this service in order to use it in auth in the SecurityConfiguration
@@ -69,22 +71,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @Override
-    public User getById(Long id) {
-        try {
-            Optional<User> optionalUser = userRepository.findById(id);
-            return optionalUser.orElse(null);
-        }catch (Exception e){
-            throw e;
-        }
-    }
+
 
     // TODO: 9/3/2020 ---Implement in the register to send an email to the user creating a link as http://localhost:8080/user/verifyEmail/{token} sending the token through in the link and having an endpoint where I will verify the token to verify the email activating this way in the end the new user.
 
     // TODO: 8/7/2020 Implement checking if the user already exists as ipUser and transfer
     // Registration method
     @Override
-    public User register(String first_name, String last_name, String username, String password, String email, String ip) throws MessagingException {
+    public User register(String first_name, String last_name, String username, String password, String email, String ip) {
         // Validating that a user with this username or email doesn't already exist
         validateNewUsernameAndEmail(username, email);
         User newUser = new User();
@@ -207,7 +201,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public List<User> getUsers() {
-        return null;
+        List<User> usersList = new ArrayList<>();
+        userRepository.findAll().forEach(usersList::add);
+        return usersList;
     }
 
     @Override
@@ -235,6 +231,16 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    public User findUserById(Long id) {
+        try {
+            Optional<User> optionalUser = userRepository.findById(id);
+            return optionalUser.orElse(null);
+        }catch (Exception e){
+            throw e;
+        }
+    }
+
+    @Override
     public User checkUserByEmail(String email) {
         // Checking to see if it is null, empty or having only spaces
         if (StringUtils.isNotBlank(email)){
@@ -258,21 +264,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-
-    // TODO: 9/3/2020 Impl
     @Override
     public Page<User> getAllByPaging(Integer page) {
-        return null;
+        Pageable pageable = PageRequest.of(page, 10, Sort.Direction.DESC);
+        return userRepository.findAll(pageable);
     }
 
-
-    // TODO: 7/14/2020 Impl
-    @Override
-    public User addUser(UserDTO userDTO) {
-        return null;
-    }
-
-    // TODO: 8/7/2020 Mine
     @Override
     public void deleteUser(String username) {
         // Checks - Exceptions in the method
@@ -328,7 +325,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         } else throw new RuntimeException("Username param was either empty, blank or User didn't exist in the db with such.");
     }
 
-    // TODO: 8/16/2020 --Implement it
+    // TODO: 8/16/2020 --Test
     @Override
     public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) {
         User existingUser = findUserByUsername(updatePasswordUserDTO.getUsername());
@@ -365,37 +362,81 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
+    // TODO: 9/6/2020 Test
     @Override
-    public Todo addNewTodo(TodoDTO todoDTO) {
-        User existingUser = findUserByUsername(todoDTO.getUsername());
-        Todo newTodo = createNewTodo(todoDTO);
-        // This automatically triggers the save to the db
-        existingUser.addTodo(newTodo);
-        Optional<Todo> optionalTodo = todoRepository.findByUuid(newTodo.getUuid());
-        if (optionalTodo.isPresent()) return optionalTodo.get();
-        else throw new RuntimeException("There was a problem trying to save the new Todo with uuid of: " + newTodo.getUuid() + ".");
+    public void promoteUserToAdmin(String username) {
+        User existingUser = findUserByUsername(username); // Does the checks
+        try {
+            existingUser.setUser_role(ROLE_ADMIN.name());
+            existingUser.setUser_authorities(ROLE_ADMIN.getAuthorities());
+            userRepository.save(existingUser);
+        }catch (Exception e) {
+            throw new RuntimeException("There was an Error trying to promote the User " + username + " to an Admin role.");
+        }
     }
 
+    // An admin registers a new User as Admin Role
     @Override
-    public Todo patchTodo(TodoDTO todoDTO) {
-        User existingUser = findUserByUsername(todoDTO.getUsername());
-        Todo existingTodo = todoServiceImpl.findTodoById(todoDTO.getId());
-        if (existingTodo.getUser().getId().equals(existingUser.getId())){
-            if (todoDTO.getTitle() != null) existingTodo.setTitle(todoDTO.getTitle());
-            if (todoDTO.getDescription() != null) existingTodo.setDescription(todoDTO.getDescription());
-            if (todoDTO.getDate_deadline() != null) existingTodo.setDate_deadline(todoDTO.getDate_deadline());
-            return todoRepository.save(existingTodo);
-        } else throw new RuntimeException("Todo with id of: " + todoDTO.getId() + " is not connected with User with id of: " + existingUser.getId());
+    public User registerNewUserByAdmin(String first_name, String last_name, String username, String email) {
+        // Validating that a user with this username or email doesn't already exist
+        validateNewUsernameAndEmail(username, email);
+        User newUser = new User();
+        newUser.setUuid(RandomStringUtils.randomAlphanumeric(14));
+        newUser.setFirst_name(first_name);
+        newUser.setLast_name(last_name);
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        // Encoding the password
+        String password = RandomStringUtils.randomAlphanumeric(12);
+        String encoded_password = encodePassword(password);
+        newUser.setPassword(encoded_password);
+        newUser.setAdded_date(new Date());
+        newUser.setIs_not_locked(true);
+        newUser.setIs_enabled(true);
+        // Setting Role
+        newUser.setUser_role(ROLE_USER.name());
+        // Setting Authorities
+        newUser.setUser_authorities(ROLE_USER.getAuthorities());
+        newUser.setImage_url(null);
+        newUser = userRepository.save(newUser);
+        try {
+            emailService.sendNewUserByAdminEmail(newUser.getUsername(), newUser.getEmail(), password);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return newUser;
     }
 
-    private Todo createNewTodo(TodoDTO todoDTO) {
-        Todo newTodo = new Todo();
-        newTodo.setTitle(todoDTO.getTitle());
-        newTodo.setDescription(todoDTO.getDescription());
-        newTodo.setDate_deadline(todoDTO.getDate_deadline());
-        newTodo.setFinished(todoDTO.isFinished());
-        newTodo.setUuid(RandomStringUtils.randomAlphanumeric(14));
-        return newTodo;
+    // An admin registers a new User as Admin Role
+    @Override
+    public User registerNewAdminByAdmin(String first_name, String last_name, String username, String email) {
+        // Validating that a user with this username or email doesn't already exist
+        validateNewUsernameAndEmail(username, email);
+        User newUser = new User();
+        newUser.setUuid(RandomStringUtils.randomAlphanumeric(14));
+        newUser.setFirst_name(first_name);
+        newUser.setLast_name(last_name);
+        newUser.setUsername(username);
+        newUser.setEmail(email);
+        // Encoding the password
+        String password = RandomStringUtils.randomAlphanumeric(12);
+        String encoded_password = encodePassword(password);
+        newUser.setPassword(encoded_password);
+        newUser.setAdded_date(new Date());
+        newUser.setIs_not_locked(true);
+        newUser.setIs_enabled(true);
+        // Setting Role
+        newUser.setUser_role(ROLE_ADMIN.name());
+        // Setting Authorities
+        newUser.setUser_authorities(ROLE_ADMIN.getAuthorities());
+        newUser.setImage_url(null);
+        newUser = userRepository.save(newUser);
+        try {
+            emailService.sendNewAdminByAdminEmail(newUser.getUsername(), newUser.getEmail(), password);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return newUser;
     }
 
 }

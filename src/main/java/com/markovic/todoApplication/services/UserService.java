@@ -16,8 +16,6 @@ import java.util.List;
 @Service
 public interface UserService {
 
-    User getById(Long id);
-
     User register(String first_name, String last_name, String username, String password, String email, String ip) throws MessagingException;
 
     ResponseEntity<User> login(String first_name, String last_name, String username, String password);
@@ -28,6 +26,8 @@ public interface UserService {
 
     User findUserByUsername(String username);
 
+    User findUserById(Long id);
+
     User checkUserByEmail(String email);
 
     User findUserByEmail(String email);
@@ -35,20 +35,20 @@ public interface UserService {
     Page<User> getAllByPaging(Integer page);
 
 
-    // Not really needed
-    User addUser(UserDTO userDTO);
-
     void deleteUser(String username);
 
     User patchUser(UserDTO userDTO);
-
-    Todo addNewTodo(TodoDTO todoDTO);
-
-    Todo patchTodo(TodoDTO todoDTO);
 
     User patchUsernameOfUser(UserDTO userDTO);
 
     User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException;
 
     void resetPassword(ResetPasswordUserDTO resetPasswordUserDTO);
+
+    void promoteUserToAdmin(String username);
+
+    // An admin registers a new User as Admin Role
+    User registerNewUserByAdmin(String first_name, String last_name, String username, String email);
+
+    User registerNewAdminByAdmin(String first_name, String last_name, String username, String email);
 }

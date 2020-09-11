@@ -4,6 +4,8 @@ import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.repositories.TodoRepository;
 import com.markovic.todoApplication.repositories.UserRepository;
+import com.markovic.todoApplication.v1.model.TodoDTO;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,19 +24,7 @@ public class TodoServiceImpl implements TodoService {
     @Autowired
     private UserServiceImpl userService;
 
-    @Override
-    public Todo getById(Long id) {
-        Optional<Todo> optionalTodo = todoRepository.findById(id);
-        if (optionalTodo.isPresent()) return optionalTodo.get();
-        else throw new RuntimeException("There was no Todo found with id of: " + id);
-    }
 
-    @Override
-    public Todo getByUuid(String uuid) {
-        Optional<Todo> optionalTodo = todoRepository.findByUuid(uuid);
-        if (optionalTodo.isPresent()) return optionalTodo.get();
-        else throw new RuntimeException("There was no Todo found with uuid of: " + uuid);
-    }
 
     @Override
     public Set<Todo> getTodoListByUsername(String username) {
@@ -46,6 +36,39 @@ public class TodoServiceImpl implements TodoService {
         } else {
             throw new RuntimeException("User with username of: " + username + " does not exist");
         }
+    }
+
+    @Override
+    public Todo addNewTodo(TodoDTO todoDTO) {
+        User existingUser = userService.findUserByUsername(todoDTO.getUsername());
+        Todo newTodo = createNewTodo(todoDTO);
+        // This automatically triggers the save to the db
+        existingUser.addTodo(newTodo);
+        Optional<Todo> optionalTodo = todoRepository.findByUuid(newTodo.getUuid());
+        if (optionalTodo.isPresent()) return optionalTodo.get();
+        else throw new RuntimeException("There was a problem trying to save the new Todo with uuid of: " + newTodo.getUuid() + ".");
+    }
+
+    private Todo createNewTodo(TodoDTO todoDTO) {
+        Todo newTodo = new Todo();
+        newTodo.setTitle(todoDTO.getTitle());
+        newTodo.setDescription(todoDTO.getDescription());
+        newTodo.setDate_deadline(todoDTO.getDate_deadline());
+        newTodo.setFinished(todoDTO.isFinished());
+        newTodo.setUuid(RandomStringUtils.randomAlphanumeric(14));
+        return newTodo;
+    }
+
+    @Override
+    public Todo patchTodo(TodoDTO todoDTO) {
+        User existingUser = userService.findUserByUsername(todoDTO.getUsername());
+        Todo existingTodo = findTodoById(todoDTO.getId());
+        if (existingTodo.getUser().getId().equals(existingUser.getId())){
+            if (todoDTO.getTitle() != null) existingTodo.setTitle(todoDTO.getTitle());
+            if (todoDTO.getDescription() != null) existingTodo.setDescription(todoDTO.getDescription());
+            if (todoDTO.getDate_deadline() != null) existingTodo.setDate_deadline(todoDTO.getDate_deadline());
+            return todoRepository.save(existingTodo);
+        } else throw new RuntimeException("Todo with id of: " + todoDTO.getId() + " is not connected with User with id of: " + existingUser.getId());
     }
 
     @Override
@@ -70,6 +93,14 @@ public class TodoServiceImpl implements TodoService {
         if (optionalTodo.isPresent()){
             return optionalTodo.get();
         } else throw new RuntimeException("Todo with id of: " + id + " wasn't found.");
+    }
+
+    // Throws Exceptions if not found
+    @Override
+    public Todo findTodoByUuid(String uuid) {
+        Optional<Todo> optionalTodo = todoRepository.findByUuid(uuid);
+        if (optionalTodo.isPresent()) return optionalTodo.get();
+        else throw new RuntimeException("There was no Todo found with uuid of: " + uuid);
     }
 
     // Doesn't throw exceptions, its a helper method. If exists, return true, if not then false
