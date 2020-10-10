@@ -1,0 +1,248 @@
+--CREATE DATABASE  IF NOT EXISTS `todo_application` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+--USE `todo_application`;
+---- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
+----
+---- Host: 127.0.0.1    Database: todo_application
+---- ------------------------------------------------------
+---- Server version	8.0.12
+--
+--/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+--/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+--/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+-- SET NAMES utf8 ;
+--/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+--/*!40103 SET TIME_ZONE='+00:00' */;
+--/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+--/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+--/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+--/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+--
+----
+---- Table structure for table `user`
+----
+--
+--DROP TABLE IF EXISTS `user`;
+--/*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- SET character_set_client = utf8mb4 ;
+--CREATE TABLE `user` (
+--  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+--  `added_date` datetime DEFAULT NULL,
+--  `devices_list` tinyblob,
+--  `email` varchar(255) NOT NULL,
+--  `first_name` varchar(255) NOT NULL,
+--  `image_url` varchar(255) DEFAULT NULL,
+--  `ip` varchar(255) DEFAULT NULL,
+--  `is_enabled` bit(1) DEFAULT NULL,
+--  `is_not_locked` bit(1) DEFAULT NULL,
+--  `last_login_date` datetime DEFAULT NULL,
+--  `last_login_date_display` datetime DEFAULT NULL,
+--  `last_name` varchar(255) NOT NULL,
+--  `password` varchar(255) NOT NULL,
+--  `user_authorities` tinyblob,
+--  `user_role` varchar(255) DEFAULT NULL,
+--  `username` varchar(255) NOT NULL,
+--  `uuid` varchar(255) NOT NULL,
+--  `first_failed_attempt_time` datetime DEFAULT NULL,
+--  `last_attempt_succeed` bit(1) NOT NULL,
+--  `num_of_attempts` int(11) NOT NULL,
+--  PRIMARY KEY (`id`)
+--) ENGINE=MyISAM AUTO_INCREMENT=36 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+--/*!40101 SET character_set_client = @saved_cs_client */;
+--
+----
+---- Dumping data for table `user`
+----
+--
+--LOCK TABLES `user` WRITE;
+--/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+--INSERT INTO `user` VALUES (1,'2020-08-09 01:13:45',NULL,'alex@dawdaw.com','test',NULL,NULL,_binary '',_binary '','2020-08-26 17:54:29','2020-08-26 17:52:35','testing','$2a$10$JlHHGYt61dF14Nue.RXP5.JC3enQOWIhHh2gynJEIC5QR4TsduPUO',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername','awdawdawdawdaw',NULL,_binary '',0),(2,'2020-08-10 01:43:57',NULL,'alex222@dawdaw.com','test1',NULL,NULL,_binary '',_binary '',NULL,NULL,'testing1','$2a$10$OrobpJhnvQwIewXFOLJQB.cjt/J7v8svRSVN/OTCywctQpscjEvuO',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername1','SHLO1GBG22vCyJ',NULL,_binary '\0',0),(3,'2020-08-10 01:52:18',NULL,'alex222222@dawdaw.com','test2',NULL,NULL,_binary '',_binary '',NULL,NULL,'testing2','$2a$10$6kDcZ82kZ9F54PpV4VE4XOUsAZ1C1I/qho6wr5wslyaB3K/Qtarge',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername2','L69i5TSgwoZBLz',NULL,_binary '\0',0),(4,'2020-08-13 21:45:05',NULL,'alex333333@dawdaw.com','test3',NULL,NULL,_binary '',_binary '','2020-08-26 17:55:12','2020-08-16 13:51:56','testing3','$2a$10$wXbRiGpW9i2IJnuyGzkVbe7HxF.jO8VyKpwxNQ5t72alEGnA.UNJi',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername3','SJvzh6ovFFaxcj',NULL,_binary '',0),(20,'2020-08-23 02:51:55',NULL,'dadwad@dadaw.com','test6',NULL,NULL,_binary '',_binary '','2020-09-03 23:39:15','2020-09-03 23:38:40','newtesting6','$2a$10$weG0BjumwM4/TXHTMs2eDOWpn.qV8MMsOXiQQvUUqG8UAJDjeerDS',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername6','rSQT1bHElNs5oH',NULL,_binary '\0',0),(32,'2020-09-01 21:42:26',NULL,'alexgil2000@hotmail.com','test5',NULL,NULL,_binary '',_binary '','2020-09-01 21:42:39',NULL,'testing5','$2a$10$EQa8FXqsQ5Rgtu.VkGAQ1O3JoppmyBNqcYCzaGAYum0RxVl7tp37G',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername5','k966CqCYnnIcCY',NULL,_binary '\0',0),(33,'2020-09-03 00:45:58',NULL,'dadwa888@dadaw.com','test8',NULL,NULL,_binary '',_binary '',NULL,NULL,'testing8','$2a$10$YXylSCMHLPBmf9tBvMWqUeAnYLA2PIalgCiJ6ZKsO7KVvnvWGjmtW',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:read','ROLE_USER','alexusername8','nglQx2f5cqLndb',NULL,_binary '\0',0),(34,'2020-09-29 17:00:56',NULL,'dadwad7@dadaw.com','test7',NULL,NULL,_binary '',_binary '',NULL,NULL,'testing7','$2a$10$oyZ/kfB54Ytc9DUa8L1HAOgVaUasc/PcxVg.QvC5.RZgwqF2cUUJa',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:readt\0user:createt\0user:updatet\0user:delete','ROLE_USER','alexusername7','qBfvzAH7MkLUfa',NULL,_binary '\0',0),(35,'2020-09-29 17:14:35',NULL,'kkkkkkk','kkkkk',NULL,NULL,_binary '',_binary '',NULL,NULL,'kkkkk','$2a$10$N6B.MDOfYYXrb4z254EZpunDfQjltXnbeUgrDpEmjydZ6FMKg.6D.',_binary '�\�\0ur\0[Ljava.lang.String;�\�V\�\�{G\0\0xp\0\0\0t\0	user:readt\0user:createt\0user:updatet\0user:delete','ROLE_USER','kkkkk','fCYb7Uxnsf2KU7',NULL,_binary '\0',0);
+--/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+--UNLOCK TABLES;
+--/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+--
+--/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+--/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+--/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+--/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+--/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+--
+---- Dump completed on 2020-10-10 22:31:49
+--
+--
+--
+--CREATE DATABASE  IF NOT EXISTS `todo_application` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+--USE `todo_application`;
+---- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
+----
+---- Host: 127.0.0.1    Database: todo_application
+---- ------------------------------------------------------
+---- Server version	8.0.12
+--
+--/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+--/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+--/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+-- SET NAMES utf8 ;
+--/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+--/*!40103 SET TIME_ZONE='+00:00' */;
+--/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+--/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+--/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+--/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+--
+----
+---- Table structure for table `todo`
+----
+--
+--DROP TABLE IF EXISTS `todo`;
+--/*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- SET character_set_client = utf8mb4 ;
+--CREATE TABLE `todo` (
+--  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+--  `date_deadline` datetime DEFAULT NULL,
+--  `description` varchar(255) DEFAULT NULL,
+--  `finished` bit(1) NOT NULL,
+--  `title` varchar(255) DEFAULT NULL,
+--  `uuid` varchar(255) NOT NULL,
+--  `user_id` bigint(20) DEFAULT NULL,
+--  PRIMARY KEY (`id`),
+--  KEY `FK2ft3dfk1d3uw77pas3xqwymm7` (`user_id`)
+--) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+--/*!40101 SET character_set_client = @saved_cs_client */;
+--
+----
+---- Dumping data for table `todo`
+----
+--
+--LOCK TABLES `todo` WRITE;
+--/*!40000 ALTER TABLE `todo` DISABLE KEYS */;
+--INSERT INTO `todo` VALUES (1,NULL,'This is the testing description for the new todo of this user.',_binary '\0','Test todo','zM5DEQbWoY786M',20),(2,'2020-08-26 03:00:00','This is the testing description 2 for the new todo of this user.',_binary '\0','Test todo2','scQfCA33SeuuNn',20),(3,'2020-08-26 03:00:00','This is the testing description 3 for the new todo of this user.',_binary '\0','Test todo3','MFcIRJoztBEWpQ',20);
+--/*!40000 ALTER TABLE `todo` ENABLE KEYS */;
+--UNLOCK TABLES;
+--/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+--
+--/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+--/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+--/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+--/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+--/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+--
+---- Dump completed on 2020-10-10 22:31:49
+--
+--
+--
+--CREATE DATABASE  IF NOT EXISTS `todo_application` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+--USE `todo_application`;
+---- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
+----
+---- Host: 127.0.0.1    Database: todo_application
+---- ------------------------------------------------------
+---- Server version	8.0.12
+--
+--/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+--/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+--/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+-- SET NAMES utf8 ;
+--/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+--/*!40103 SET TIME_ZONE='+00:00' */;
+--/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+--/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+--/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+--/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+--
+----
+---- Table structure for table `stigma`
+----
+--
+--DROP TABLE IF EXISTS `stigma`;
+--/*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- SET character_set_client = utf8mb4 ;
+--CREATE TABLE `stigma` (
+--  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+--  `device_name` varchar(255) DEFAULT NULL,
+--  `ip` varchar(255) DEFAULT NULL,
+--  `location` varchar(255) DEFAULT NULL,
+--  `user_id` bigint(20) DEFAULT NULL,
+--  PRIMARY KEY (`id`),
+--  KEY `FK2q5h4w5ab9y0e8dmghl127n4d` (`user_id`)
+--) ENGINE=MyISAM AUTO_INCREMENT=64 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+--/*!40101 SET character_set_client = @saved_cs_client */;
+--
+----
+---- Dumping data for table `stigma`
+----
+--
+--LOCK TABLES `stigma` WRITE;
+--/*!40000 ALTER TABLE `stigma` DISABLE KEYS */;
+--INSERT INTO `stigma` VALUES (1,NULL,'1.232.324',NULL,1),(2,NULL,'1.333.111',NULL,2),(3,NULL,'1.222.222',NULL,3),(4,NULL,'1.333.333',NULL,4),(5,NULL,'1.333.333',NULL,4),(6,NULL,'1.232.324',NULL,1),(7,NULL,'1.333.333',NULL,4),(8,NULL,'1.333.333',NULL,4),(9,NULL,'1.333.333',NULL,4),(10,NULL,'1.333.333',NULL,4),(11,NULL,'1.333.333',NULL,4),(12,NULL,'1.333.333',NULL,4),(13,NULL,'1.333.333',NULL,4),(14,NULL,'1.333.333',NULL,4),(15,NULL,'1.333.333',NULL,4),(16,NULL,'1.333.333',NULL,4),(17,NULL,'1.333.333',NULL,4),(18,NULL,'1.333.333',NULL,4),(19,NULL,'1.333.333',NULL,4),(20,NULL,'1.333.333',NULL,4),(21,NULL,'1.333.333',NULL,4),(22,NULL,'1.333.333',NULL,4),(23,NULL,'1.333.333',NULL,4),(24,NULL,'1.333.333',NULL,4),(25,NULL,'1.333.333',NULL,4),(26,NULL,'1.333.333',NULL,4),(27,NULL,'1.333.333',NULL,4),(28,NULL,'1.333.333',NULL,4),(29,NULL,'1.333.333',NULL,4),(30,NULL,'1.444.444',NULL,5),(31,NULL,'1.555.555',NULL,6),(32,NULL,'1.555.555',NULL,7),(33,NULL,'1.555.555',NULL,8),(34,NULL,'1.555.555',NULL,9),(35,NULL,'1.555.555',NULL,10),(36,NULL,'1.555.5555',NULL,10),(37,NULL,'1.555.555',NULL,11),(38,NULL,'1.555.555',NULL,12),(39,NULL,'1.555.555',NULL,13),(40,NULL,'1.555.555',NULL,14),(41,NULL,'1.555.555',NULL,15),(42,NULL,'1.555.555',NULL,16),(43,NULL,'1.555.555',NULL,17),(44,NULL,'1.555.555',NULL,18),(45,NULL,'1.555.555',NULL,19),(46,NULL,'1.666.666',NULL,20),(47,NULL,'1.555.555',NULL,21),(48,NULL,'1.555.5555',NULL,21),(49,NULL,'1.555.555',NULL,22),(50,NULL,'1.555.555',NULL,23),(51,NULL,'1.555.555',NULL,24),(52,NULL,'1.666.6667',NULL,20),(53,NULL,'1.777.777',NULL,25),(54,NULL,'1.777.777',NULL,26),(55,NULL,'1.777.777',NULL,27),(56,NULL,'1.777.777',NULL,28),(57,NULL,'1.777.777',NULL,29),(58,NULL,'1.777.777',NULL,30),(59,NULL,'1.777.777',NULL,31),(60,NULL,'1.555.555',NULL,32),(61,NULL,'1.555.5555',NULL,32),(62,NULL,'1.888.888',NULL,33),(63,NULL,'1.777.777',NULL,34);
+--/*!40000 ALTER TABLE `stigma` ENABLE KEYS */;
+--UNLOCK TABLES;
+--/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+--
+--/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+--/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+--/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+--/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+--/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+--
+---- Dump completed on 2020-10-10 22:31:48
+--
+--
+--
+--CREATE DATABASE  IF NOT EXISTS `todo_application` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */;
+--USE `todo_application`;
+---- MySQL dump 10.13  Distrib 8.0.12, for Win64 (x86_64)
+----
+---- Host: 127.0.0.1    Database: todo_application
+---- ------------------------------------------------------
+---- Server version	8.0.12
+--
+--/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+--/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+--/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+-- SET NAMES utf8 ;
+--/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+--/*!40103 SET TIME_ZONE='+00:00' */;
+--/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+--/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+--/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+--/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+--
+----
+---- Table structure for table `ip_user`
+----
+--
+--DROP TABLE IF EXISTS `ip_user`;
+--/*!40101 SET @saved_cs_client     = @@character_set_client */;
+-- SET character_set_client = utf8mb4 ;
+--CREATE TABLE `ip_user` (
+--  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+--  `ip` varchar(255) DEFAULT NULL,
+--  PRIMARY KEY (`id`)
+--) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+--/*!40101 SET character_set_client = @saved_cs_client */;
+--
+----
+---- Dumping data for table `ip_user`
+----
+--
+--LOCK TABLES `ip_user` WRITE;
+--/*!40000 ALTER TABLE `ip_user` DISABLE KEYS */;
+--/*!40000 ALTER TABLE `ip_user` ENABLE KEYS */;
+--UNLOCK TABLES;
+--/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+--
+--/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+--/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+--/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+--/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+--/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+--/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+--
+---- Dump completed on 2020-10-10 22:31:48
