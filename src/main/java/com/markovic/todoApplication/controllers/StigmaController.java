@@ -23,7 +23,7 @@ public class StigmaController {
     @CrossOrigin
     @DeleteMapping("/deleteStigmaByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public void delete(@RequestParam Long id, @RequestParam String username){
         stigmaService.deleteStigma(id, username);
     }
@@ -32,7 +32,7 @@ public class StigmaController {
     @CrossOrigin
     @GetMapping("/getAllStigmasByUsername")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public Set<Stigma> getStigmasByUsername(@RequestParam String username){
         return stigmaService.getStigmaListByUsername(username);
     }

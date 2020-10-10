@@ -24,7 +24,7 @@ public class TodoController {
     @CrossOrigin
     @GetMapping("/findTodoById")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public Todo findTodoById(@RequestParam String username, @RequestParam Long id){
         return todoService.findTodoById(id);
     }
@@ -32,7 +32,7 @@ public class TodoController {
     @CrossOrigin
     @GetMapping("/findTodoByUuid")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public Todo findTodoByUuid(@RequestParam String username, @RequestParam String uuid){
         return todoService.findTodoByUuid(uuid);
     }
@@ -40,7 +40,7 @@ public class TodoController {
     @CrossOrigin
     @GetMapping("/getAllTodosByUsername")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public Set<Todo> getTodosByUsername(@RequestParam String username){
         return todoService.getTodoListByUsername(username);
     }
@@ -48,7 +48,7 @@ public class TodoController {
     @CrossOrigin
     @DeleteMapping("/deleteTodoByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public void deleteTodoById(@RequestParam Long id, @RequestParam String username){
         todoService.deleteTodoById(id, username);
     }
@@ -56,7 +56,7 @@ public class TodoController {
     @CrossOrigin
     @PostMapping("/addNewTodo")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#todoDTO.username == principal.username")
+//    @PreAuthorize("#todoDTO.username == principal.username")
     public Todo addNewTodo(@RequestBody TodoDTO todoDTO){
         return todoService.addNewTodo(todoDTO);
     }
@@ -64,7 +64,7 @@ public class TodoController {
     @CrossOrigin
     @PatchMapping("/patchTodo")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#todoDTO.username == principal.username")
+//    @PreAuthorize("#todoDTO.username == principal.username")
     public Todo patchTodo(@RequestBody TodoDTO todoDTO) { return todoService.patchTodo(todoDTO); }
 
 }

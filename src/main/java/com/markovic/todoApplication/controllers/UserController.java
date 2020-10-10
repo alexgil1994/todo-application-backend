@@ -29,6 +29,9 @@ public class UserController {
     private EmailService emailService;
 
 
+    // TODO: 10/10/2020 PreAuthorize annotations for username == principal.username etc. are commented because turns out the spring framework has itself security mechanism to stop such bad actions.
+    // TODO: 10/10/2020 Keeping the PreAuthorize annotations for Role == admin because these are business logic authorization checks
+
     @CrossOrigin
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
@@ -52,7 +55,7 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public User findUser(@RequestParam Long id){ return userServiceImpl.findUserById(id); }
 
-//    // TODO: 9/1/2020 Testing only
+//    // 9/1/2020 Testing only
 //    @CrossOrigin
 //    @PostMapping("/email")
 //    @ResponseStatus(HttpStatus.OK)
@@ -63,7 +66,7 @@ public class UserController {
     @CrossOrigin
     @PatchMapping("/patchUser")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#userDTO.username == principal.username")
+//    @PreAuthorize("#userDTO.username == principal.username")
     public User patchUser(@RequestBody UserDTO userDTO){
         return userServiceImpl.patchUser(userDTO);
     }
@@ -71,7 +74,7 @@ public class UserController {
     @CrossOrigin
     @PatchMapping("/patchUsernameOfUser")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#userDTO.username == principal.username")
+//    @PreAuthorize("#userDTO.username == principal.username")
     public User patchUsernameOfUser(@RequestBody UserDTO userDTO){
         return userServiceImpl.patchUsernameOfUser(userDTO);
     }
@@ -79,7 +82,7 @@ public class UserController {
     @CrossOrigin
     @PatchMapping("/updatePassword")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#updatePasswordUserDTO.username == principal.username")
+//    @PreAuthorize("#updatePasswordUserDTO.username == principal.username")
     public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
         return userServiceImpl.updatePassword(updatePasswordUserDTO);
     }
@@ -95,7 +98,7 @@ public class UserController {
     @CrossOrigin
     @PostMapping("/promoteUserToAdmin")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public void promoteUserToAdmin(@RequestParam String username){ userServiceImpl.promoteUserToAdmin(username); }
 
     // TODO: 9/6/2020 Test
@@ -129,7 +132,7 @@ public class UserController {
     @CrossOrigin
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public void delete(@RequestParam String username){
         userServiceImpl.deleteUser(username);
     }
@@ -137,7 +140,7 @@ public class UserController {
     @CrossOrigin
     @GetMapping("/getAllByPaging")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == principal.username")
     public Page<User> getAllByPaging(@RequestParam String username, @RequestParam int page){ return userServiceImpl.getAllByPaging(page); }
 
     @CrossOrigin
