@@ -33,6 +33,7 @@ public class StigmaController {
     @GetMapping("/getAllStigmasByUsername")
     @ResponseStatus(HttpStatus.OK)
 //    @PreAuthorize("#username == principal.username")
+//    @PreAuthorize("#username == authentication.getUsername()")
     public Set<Stigma> getStigmasByUsername(@RequestParam String username){
         return stigmaService.getStigmaListByUsername(username);
     }

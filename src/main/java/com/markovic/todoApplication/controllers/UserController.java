@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -49,6 +50,23 @@ public class UserController {
     @GetMapping("/findUserByUsername")
     @ResponseStatus(HttpStatus.OK)
     public User findUser(@RequestParam String username){ return userServiceImpl.findUserByUsername(username); }
+
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020                 Change all the methods to use instead of the username either in dto or as param -> to use Authentication authentication.getName() to get the username and do the request. This way we know that the requests are being triggered by this user for himself and not another user. Could also use Principal principal
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020
+    // TODO: 10/11/2020     IMPLEMENT FARTHER TO RETURN THE USER SO THAT THE NUXT AUTH WILL SET HIM CORRECTLY WHEN TRIGGERED THROUGH THE AUTH.LOGIN() WHICH INSIDE ALSO CALLS THE FETCH USER REQUEST AND THEN SET HIM IN STORE - QOOKIES - LOCAL-STORAGE
+    @CrossOrigin
+    @GetMapping("/getUserByTokenUsername")
+    @ResponseStatus(HttpStatus.OK)
+    public String getUserByTokenUsername(Authentication authentication){ return authentication.getName(); }
 
     @CrossOrigin
     @GetMapping("/findUserById")
