@@ -6,6 +6,7 @@ import com.markovic.todoApplication.services.StigmaServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -23,19 +24,16 @@ public class StigmaController {
     @CrossOrigin
     @DeleteMapping("/deleteStigmaByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public void delete(@RequestParam Long id, @RequestParam String username){
-        stigmaService.deleteStigma(id, username);
+    public void delete(Authentication authentication, @RequestParam Long id){
+        stigmaService.deleteStigma(id, authentication.getName());
     }
 
     // TODO: 8/8/2020 Could only be changed to not show all the user information that are attached to the Stigma's User
     @CrossOrigin
     @GetMapping("/getAllStigmasByUsername")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-//    @PreAuthorize("#username == authentication.getUsername()")
-    public Set<Stigma> getStigmasByUsername(@RequestParam String username){
-        return stigmaService.getStigmaListByUsername(username);
+    public Set<Stigma> getStigmasByUsername(Authentication authentication){
+        return stigmaService.getStigmaListByUsername(authentication.getName());
     }
 
 }

@@ -49,66 +49,38 @@ public class UserController {
     @CrossOrigin
     @GetMapping("/findUserByUsername")
     @ResponseStatus(HttpStatus.OK)
-    public User findUser(@RequestParam String username){ return userServiceImpl.findUserByUsername(username); }
-
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020                 Change all the methods to use instead of the username either in dto or as param -> to use Authentication authentication.getName() to get the username and do the request. This way we know that the requests are being triggered by this user for himself and not another user. Could also use Principal principal
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020
-    // TODO: 10/11/2020     IMPLEMENT FARTHER TO RETURN THE USER SO THAT THE NUXT AUTH WILL SET HIM CORRECTLY WHEN TRIGGERED THROUGH THE AUTH.LOGIN() WHICH INSIDE ALSO CALLS THE FETCH USER REQUEST AND THEN SET HIM IN STORE - QOOKIES - LOCAL-STORAGE
-    @CrossOrigin
-    @GetMapping("/getUserByTokenUsername")
-    @ResponseStatus(HttpStatus.OK)
-    public String getUserByTokenUsername(Authentication authentication){ return authentication.getName(); }
+    public User findUser(Authentication authentication){ return userServiceImpl.findUserByUsername(authentication.getName()); }
 
     @CrossOrigin
     @GetMapping("/findUserById")
     @ResponseStatus(HttpStatus.OK)
     public User findUser(@RequestParam Long id){ return userServiceImpl.findUserById(id); }
 
-//    // 9/1/2020 Testing only
-//    @CrossOrigin
-//    @PostMapping("/email")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void checkEmail(@RequestBody UserDTO userDTO) {
-//        emailService.sendNewUserEmail(userDTO.getUsername(), userDTO.getEmail());
-//    }
-
     @CrossOrigin
     @PatchMapping("/patchUser")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#userDTO.username == principal.username")
-    public User patchUser(@RequestBody UserDTO userDTO){
-        return userServiceImpl.patchUser(userDTO);
+    public User patchUser(Authentication authentication, @RequestBody UserDTO userDTO){
+        return userServiceImpl.patchUser(userDTO, authentication.getName());
     }
 
     @CrossOrigin
     @PatchMapping("/patchUsernameOfUser")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#userDTO.username == principal.username")
-    public User patchUsernameOfUser(@RequestBody UserDTO userDTO){
-        return userServiceImpl.patchUsernameOfUser(userDTO);
+    public User patchUsernameOfUser(Authentication authentication, @RequestBody UserDTO userDTO){
+        return userServiceImpl.patchUsernameOfUser(userDTO, authentication.getName());
     }
 
     @CrossOrigin
     @PatchMapping("/updatePassword")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#updatePasswordUserDTO.username == principal.username")
-    public User updatePassword(@RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
-        return userServiceImpl.updatePassword(updatePasswordUserDTO);
+    public User updatePassword(Authentication authentication, @RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
+        return userServiceImpl.updatePassword(updatePasswordUserDTO, authentication.getName());
     }
 
     @CrossOrigin
     @PatchMapping("/resetPassword")
     @ResponseStatus(HttpStatus.OK)
-    public void resetPassword(@RequestBody ResetPasswordUserDTO resetPasswordUserDTO){
+    public void resetPassword(@RequestBody ResetPasswordUserDTO resetPasswordUserDTO){ // We don't use token for this request, it is public so cant use Authentication to get username here
         userServiceImpl.resetPassword(resetPasswordUserDTO);
     }
 
@@ -116,14 +88,13 @@ public class UserController {
     @CrossOrigin
     @PostMapping("/promoteUserToAdmin")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public void promoteUserToAdmin(@RequestParam String username){ userServiceImpl.promoteUserToAdmin(username); }
+    public void promoteUserToAdmin(Authentication authentication){ userServiceImpl.promoteUserToAdmin(authentication.getName()); }
 
     // TODO: 9/6/2020 Test
     @CrossOrigin
     @PostMapping("/registerNewUserByAdmin")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')") // It's an admin so we are safe
     public User registerNewUserByAdmin(@RequestBody UserDTO userDTO){
         return userServiceImpl.registerNewUserByAdmin(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getEmail());
     }
@@ -132,7 +103,7 @@ public class UserController {
     @CrossOrigin
     @PostMapping("/registerNewAdminByAdmin")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')") // It's an admin so we are safe
     public User registerNewAdminByAdmin(@RequestBody UserDTO userDTO){
         return userServiceImpl.registerNewAdminByAdmin(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getEmail());
     }
@@ -141,7 +112,7 @@ public class UserController {
     @CrossOrigin
     @DeleteMapping("/deleteUserByAdmin")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')") // It's an admin so we are safe
     public void deleteUserByAdmin(@RequestParam String username){
         userServiceImpl.deleteUser(username);
     }
@@ -150,20 +121,18 @@ public class UserController {
     @CrossOrigin
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public void delete(@RequestParam String username){
-        userServiceImpl.deleteUser(username);
+    public void delete(Authentication authentication){
+        userServiceImpl.deleteUser(authentication.getName());
     }
 
     @CrossOrigin
     @GetMapping("/getAllByPaging")
-    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public Page<User> getAllByPaging(@RequestParam String username, @RequestParam int page){ return userServiceImpl.getAllByPaging(page); }
+    @ResponseStatus(HttpStatus.OK) // It needs generally a token
+    public Page<User> getAllByPaging(@RequestParam int page){ return userServiceImpl.getAllByPaging(page); }
 
     @CrossOrigin
     @GetMapping("/getUsers")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.OK) // It needs generally a token
     public List<User> getAllUsers(){ return userServiceImpl.getUsers(); }
 
 }

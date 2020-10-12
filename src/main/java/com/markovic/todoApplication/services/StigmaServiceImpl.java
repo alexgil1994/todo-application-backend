@@ -23,21 +23,21 @@ public class StigmaServiceImpl implements StigmaService {
     private UserServiceImpl userService;
 
     @Override
-    public Set<Stigma> getStigmaListByUsername(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+    public Set<Stigma> getStigmaListByUsername(String tokenUsername) {
+        Optional<User> optionalUser = userRepository.findByUsername(tokenUsername);
         if (optionalUser.isPresent()){
             User user = optionalUser.get();
             // Using byUserIs instead of id or username because jpa needs the whole object
             return stigmaRepository.getStigmaListByUserIs(user);
         } else {
-            throw new RuntimeException("User with username of: " + username + " does not exist");
+            throw new RuntimeException("User with username of: " + tokenUsername + " does not exist");
         }
     }
 
     @Override
-    public void deleteStigma(Long id, String username) {
+    public void deleteStigma(Long id, String tokenUsername) {
         // Checks - Exceptions in the method
-        User user = userService.findUserByUsername(username);
+        User user = userService.findUserByUsername(tokenUsername);
         // Checks - Exceptions in the method
         Stigma stigma = findStigmaById(id);
         // Checking Id's, if true delete it else throw exception

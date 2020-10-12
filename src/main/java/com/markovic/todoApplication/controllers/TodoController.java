@@ -7,6 +7,7 @@ import com.markovic.todoApplication.v1.model.TodoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
@@ -20,51 +21,46 @@ public class TodoController {
     @Autowired
     private TodoServiceImpl todoService;
 
-
+    // TODO: 10/12/2020 Could be checking if the todo id is actually of this tokenUsername User through Authentication authentication param for ultra safety
     @CrossOrigin
     @GetMapping("/findTodoById")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public Todo findTodoById(@RequestParam String username, @RequestParam Long id){
+    public Todo findTodoById(@RequestParam Long id){
         return todoService.findTodoById(id);
     }
 
+    // TODO: 10/12/2020 Could be checking if the todo id is actually of this tokenUsername User through Authentication authentication param for ultra safety
     @CrossOrigin
     @GetMapping("/findTodoByUuid")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public Todo findTodoByUuid(@RequestParam String username, @RequestParam String uuid){
+    public Todo findTodoByUuid(@RequestParam String uuid){
         return todoService.findTodoByUuid(uuid);
     }
 
     @CrossOrigin
     @GetMapping("/getAllTodosByUsername")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public Set<Todo> getTodosByUsername(@RequestParam String username){
-        return todoService.getTodoListByUsername(username);
+    public Set<Todo> getTodosByUsername(Authentication authentication){
+        return todoService.getTodoListByUsername(authentication.getName());
     }
 
     @CrossOrigin
     @DeleteMapping("/deleteTodoByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#username == principal.username")
-    public void deleteTodoById(@RequestParam Long id, @RequestParam String username){
-        todoService.deleteTodoById(id, username);
+    public void deleteTodoById(Authentication authentication, @RequestParam Long id){
+        todoService.deleteTodoById(id, authentication.getName());
     }
 
     @CrossOrigin
     @PostMapping("/addNewTodo")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#todoDTO.username == principal.username")
-    public Todo addNewTodo(@RequestBody TodoDTO todoDTO){
-        return todoService.addNewTodo(todoDTO);
+    public Todo addNewTodo(Authentication authentication, @RequestBody TodoDTO todoDTO){
+        return todoService.addNewTodo(todoDTO, authentication.getName());
     }
 
     @CrossOrigin
     @PatchMapping("/patchTodo")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("#todoDTO.username == principal.username")
-    public Todo patchTodo(@RequestBody TodoDTO todoDTO) { return todoService.patchTodo(todoDTO); }
+    public Todo patchTodo(Authentication authentication, @RequestBody TodoDTO todoDTO) { return todoService.patchTodo(todoDTO, authentication.getName()); }
 
 }

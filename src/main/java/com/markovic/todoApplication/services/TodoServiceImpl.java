@@ -27,20 +27,20 @@ public class TodoServiceImpl implements TodoService {
 
 
     @Override
-    public Set<Todo> getTodoListByUsername(String username) {
-        Optional<User> optionalUser = userRepository.findByUsername(username);
+    public Set<Todo> getTodoListByUsername(String tokenUsername) {
+        Optional<User> optionalUser = userRepository.findByUsername(tokenUsername);
         if (optionalUser.isPresent()){
             User user = optionalUser.get();
             // Using byUserIs instead of id or username because jpa needs the whole object
             return todoRepository.getTodoListByUserIs(user);
         } else {
-            throw new RuntimeException("User with username of: " + username + " does not exist");
+            throw new RuntimeException("User with username of: " + tokenUsername + " does not exist");
         }
     }
 
     @Override
-    public Todo addNewTodo(TodoDTO todoDTO) {
-        User existingUser = userService.findUserByUsername(todoDTO.getUsername());
+    public Todo addNewTodo(TodoDTO todoDTO, String tokenUsername) {
+        User existingUser = userService.findUserByUsername(tokenUsername);
         Todo newTodo = createNewTodo(todoDTO);
         // This automatically triggers the save to the db
         existingUser.addTodo(newTodo);
@@ -60,8 +60,8 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public Todo patchTodo(TodoDTO todoDTO) {
-        User existingUser = userService.findUserByUsername(todoDTO.getUsername());
+    public Todo patchTodo(TodoDTO todoDTO, String tokenUsername) {
+        User existingUser = userService.findUserByUsername(tokenUsername);
         Todo existingTodo = findTodoById(todoDTO.getId());
         if (existingTodo.getUser().getId().equals(existingUser.getId())){
             if (todoDTO.getTitle() != null) existingTodo.setTitle(todoDTO.getTitle());
@@ -72,9 +72,9 @@ public class TodoServiceImpl implements TodoService {
     }
 
     @Override
-    public void deleteTodoById(Long id, String username) {
+    public void deleteTodoById(Long id, String tokenUsername) {
         // Checks - Exceptions in the method
-        User user = userService.findUserByUsername(username);
+        User user = userService.findUserByUsername(tokenUsername);
         // Checks - Exceptions in the method
         Todo todo = findTodoById(id);
         // Checking Id's, if true delete it else throw exception

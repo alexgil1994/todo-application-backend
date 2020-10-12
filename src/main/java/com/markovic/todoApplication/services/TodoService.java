@@ -13,11 +13,11 @@ public interface TodoService {
 
     Todo findTodoByUuid(String uuid);
 
-    Set<Todo> getTodoListByUsername(String username);
+    Set<Todo> getTodoListByUsername(String tokenUsername);
 
-    Todo addNewTodo(TodoDTO todoDTO);
+    Todo addNewTodo(TodoDTO todoDTO, String tokenUsername);
 
-    Todo patchTodo(TodoDTO todoDTO);
+    Todo patchTodo(TodoDTO todoDTO, String tokenUsername);
 
-    void deleteTodoById(Long id, String username);
+    void deleteTodoById(Long id, String tokenUsername);
 }

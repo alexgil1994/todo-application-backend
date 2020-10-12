@@ -1,10 +1,8 @@
 package com.markovic.todoApplication.services;
 
-import com.markovic.todoApplication.domain.Todo;
 import com.markovic.todoApplication.domain.User;
 import com.markovic.todoApplication.v1.model.ResetPasswordUserDTO;
 import com.markovic.todoApplication.v1.model.UpdatePasswordUserDTO;
-import com.markovic.todoApplication.v1.model.TodoDTO;
 import com.markovic.todoApplication.v1.model.UserDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +22,7 @@ public interface UserService {
 
     User checkUserByUsername(String username);
 
-    User findUserByUsername(String username);
+    User findUserByUsername(String tokenUsername);
 
     User findUserById(Long id);
 
@@ -35,17 +33,17 @@ public interface UserService {
     Page<User> getAllByPaging(Integer page);
 
 
-    void deleteUser(String username);
+    void deleteUser(String tokenUsername);
 
-    User patchUser(UserDTO userDTO);
+    User patchUser(UserDTO userDTO, String tokenUsername);
 
-    User patchUsernameOfUser(UserDTO userDTO);
+    User patchUsernameOfUser(UserDTO userDTO, String tokenUsername);
 
-    User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException;
+    User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO, String tokenUsername) throws MessagingException;
 
     void resetPassword(ResetPasswordUserDTO resetPasswordUserDTO);
 
-    void promoteUserToAdmin(String username);
+    void promoteUserToAdmin(String tokenUsername);
 
     // An admin registers a new User as Admin Role
     User registerNewUserByAdmin(String first_name, String last_name, String username, String email);

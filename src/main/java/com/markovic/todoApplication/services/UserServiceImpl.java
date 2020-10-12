@@ -271,14 +271,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
-    public void deleteUser(String username) {
+    public void deleteUser(String tokenUsername) {
         // Checks - Exceptions in the method
-        User user = findUserByUsername(username);
+        User user = findUserByUsername(tokenUsername);
         // Checking Id's, if true delete it else throw exception
         userRepository.deleteById(user.getId());
         // Check if stills exists after deleting
         if (checkUserById(user.getId())){
-            throw new RuntimeException("The User with Username of: " + username + "wasn't deleted since it was found again");
+            throw new RuntimeException("The User with Username of: " + tokenUsername + "wasn't deleted since it was found again");
         }
     }
 
@@ -291,10 +291,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     // TODO: 8/11/2020 --How to make it SECURE knowing surely that the user that triggers the request is actually the one that asks the request and not someone else that by-passed (got it somehow) JWT token. --Could be with actually checking the token de-encrypting it to see the actual username (Learn how to do this also manually (Spring security does it as well))
     //  ---Could be solved by using preAuthorize annotation in the controller that the username is == with the authentication context username.
     @Override
-    public User patchUser(UserDTO userDTO) {
+    public User patchUser(UserDTO userDTO, String tokenUsername) {
         // Throwing exceptions in the method
-        User existingUser = findUserByUsername(userDTO.getUsername());
-        if (checkIfEditIsBySameUser(userDTO.getUsername(), existingUser)){
+        User existingUser = findUserByUsername(tokenUsername);
+//        if (checkIfEditIsBySameUser(tokenUsername, existingUser)){ // Not needed anymore since I am getting the user from the token itself
             if (userDTO.getFirst_name() != null) existingUser.setFirst_name(userDTO.getFirst_name());
             if (userDTO.getLast_name() != null) existingUser.setLast_name(userDTO.getLast_name());
             if (userDTO.getEmail() != null) existingUser.setEmail(userDTO.getEmail());
@@ -305,7 +305,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     existingUser.setEmail(userDTO.getEmail());
                 }
             }
-        }
+//        }
         return userRepository.save(existingUser);
     }
 
@@ -316,10 +316,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // TODO: 8/11/2020 Find a better approach
     @Override
-    public User patchUsernameOfUser(UserDTO userDTO) {
+    public User patchUsernameOfUser(UserDTO userDTO, String tokenUsername) {
         // Does all the checks-exceptions inside
         User existingUser = findUserByEmail(userDTO.getEmail());
-        if (StringUtils.isNotBlank(userDTO.getUsername()) && StringUtils.isNotEmpty(userDTO.getUsername()) && checkUserByUsername(userDTO.getUsername()) != null){
+        if (StringUtils.isNotBlank(tokenUsername) && StringUtils.isNotEmpty(tokenUsername) && checkUserByUsername(tokenUsername) != null){ // Not really needed to check these things anymore
             existingUser.setEmail(userDTO.getEmail());
             return existingUser;
         } else throw new RuntimeException("Username param was either empty, blank or User didn't exist in the db with such.");
@@ -327,8 +327,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // TODO: 8/16/2020 --Test
     @Override
-    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO) {
-        User existingUser = findUserByUsername(updatePasswordUserDTO.getUsername());
+    public User updatePassword(UpdatePasswordUserDTO updatePasswordUserDTO, String tokenUsername) {
+        User existingUser = findUserByUsername(tokenUsername);
         if (bCryptPasswordEncoder.encode(updatePasswordUserDTO.getOld_password()).equals(existingUser.getPassword()) // Checking vars
                 && StringUtils.isNotEmpty(updatePasswordUserDTO.getNew_password())
                 && StringUtils.isNotBlank(updatePasswordUserDTO.getNew_password())) {
@@ -364,14 +364,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     // TODO: 9/6/2020 Test
     @Override
-    public void promoteUserToAdmin(String username) {
-        User existingUser = findUserByUsername(username); // Does the checks
+    public void promoteUserToAdmin(String tokenUsername) {
+        User existingUser = findUserByUsername(tokenUsername); // Does the checks
         try {
             existingUser.setUser_role(ROLE_ADMIN.name());
             existingUser.setUser_authorities(ROLE_ADMIN.getAuthorities());
             userRepository.save(existingUser);
         }catch (Exception e) {
-            throw new RuntimeException("There was an Error trying to promote the User " + username + " to an Admin role.");
+            throw new RuntimeException("There was an Error trying to promote the User " + tokenUsername + " to an Admin role.");
         }
     }
 
