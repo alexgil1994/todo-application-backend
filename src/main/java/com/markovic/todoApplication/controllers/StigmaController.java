@@ -21,7 +21,6 @@ public class StigmaController {
     private StigmaServiceImpl stigmaService;
 
 
-    @CrossOrigin
     @DeleteMapping("/deleteStigmaByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
     public void delete(Authentication authentication, @RequestParam Long id){
@@ -29,7 +28,6 @@ public class StigmaController {
     }
 
     // TODO: 8/8/2020 Could only be changed to not show all the user information that are attached to the Stigma's User
-    @CrossOrigin
     @GetMapping("/getAllStigmasByUsername")
     @ResponseStatus(HttpStatus.OK)
     public Set<Stigma> getStigmasByUsername(Authentication authentication){

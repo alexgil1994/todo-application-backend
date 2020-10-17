@@ -22,7 +22,6 @@ public class TodoController {
     private TodoServiceImpl todoService;
 
     // TODO: 10/12/2020 Could be checking if the todo id is actually of this tokenUsername User through Authentication authentication param for ultra safety
-    @CrossOrigin
     @GetMapping("/findTodoById")
     @ResponseStatus(HttpStatus.OK)
     public Todo findTodoById(@RequestParam Long id){
@@ -30,35 +29,30 @@ public class TodoController {
     }
 
     // TODO: 10/12/2020 Could be checking if the todo id is actually of this tokenUsername User through Authentication authentication param for ultra safety
-    @CrossOrigin
     @GetMapping("/findTodoByUuid")
     @ResponseStatus(HttpStatus.OK)
     public Todo findTodoByUuid(@RequestParam String uuid){
         return todoService.findTodoByUuid(uuid);
     }
 
-    @CrossOrigin
     @GetMapping("/getAllTodosByUsername")
     @ResponseStatus(HttpStatus.OK)
     public Set<Todo> getTodosByUsername(Authentication authentication){
         return todoService.getTodoListByUsername(authentication.getName());
     }
 
-    @CrossOrigin
     @DeleteMapping("/deleteTodoByIdAndUsername")
     @ResponseStatus(HttpStatus.OK)
     public void deleteTodoById(Authentication authentication, @RequestParam Long id){
         todoService.deleteTodoById(id, authentication.getName());
     }
 
-    @CrossOrigin
     @PostMapping("/addNewTodo")
     @ResponseStatus(HttpStatus.OK)
     public Todo addNewTodo(Authentication authentication, @RequestBody TodoDTO todoDTO){
         return todoService.addNewTodo(todoDTO, authentication.getName());
     }
 
-    @CrossOrigin
     @PatchMapping("/patchTodo")
     @ResponseStatus(HttpStatus.OK)
     public Todo patchTodo(Authentication authentication, @RequestBody TodoDTO todoDTO) { return todoService.patchTodo(todoDTO, authentication.getName()); }

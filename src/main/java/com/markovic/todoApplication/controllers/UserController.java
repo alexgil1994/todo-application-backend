@@ -30,54 +30,45 @@ public class UserController {
     private EmailService emailService;
 
 
-    // TODO: 10/10/2020 PreAuthorize annotations for username == principal.username etc. are commented because turns out the spring framework has itself security mechanism to stop such bad actions.
     // TODO: 10/10/2020 Keeping the PreAuthorize annotations for Role == admin because these are business logic authorization checks
 
-    @CrossOrigin
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
     public User register(@RequestBody UserDTO userDTO) throws MessagingException {
         return userServiceImpl.register(userDTO.getFirst_name(), userDTO.getLast_name(), userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
-    @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody UserDTO userDTO){
         return userServiceImpl.login(userDTO.getUsername(), userDTO.getPassword(), userDTO.getEmail(), userDTO.getIp());
     }
 
-    @CrossOrigin
     @GetMapping("/findUserByUsername")
     @ResponseStatus(HttpStatus.OK)
     public User findUser(Authentication authentication){ return userServiceImpl.findUserByUsername(authentication.getName()); }
 
-    @CrossOrigin
     @GetMapping("/findUserById")
     @ResponseStatus(HttpStatus.OK)
     public User findUser(@RequestParam Long id){ return userServiceImpl.findUserById(id); }
 
-    @CrossOrigin
     @PatchMapping("/patchUser")
     @ResponseStatus(HttpStatus.OK)
     public User patchUser(Authentication authentication, @RequestBody UserDTO userDTO){
         return userServiceImpl.patchUser(userDTO, authentication.getName());
     }
 
-    @CrossOrigin
     @PatchMapping("/patchUsernameOfUser")
     @ResponseStatus(HttpStatus.OK)
     public User patchUsernameOfUser(Authentication authentication, @RequestBody UserDTO userDTO){
         return userServiceImpl.patchUsernameOfUser(userDTO, authentication.getName());
     }
 
-    @CrossOrigin
     @PatchMapping("/updatePassword")
     @ResponseStatus(HttpStatus.OK)
     public User updatePassword(Authentication authentication, @RequestBody UpdatePasswordUserDTO updatePasswordUserDTO) throws MessagingException {
         return userServiceImpl.updatePassword(updatePasswordUserDTO, authentication.getName());
     }
 
-    @CrossOrigin
     @PatchMapping("/resetPassword")
     @ResponseStatus(HttpStatus.OK)
     public void resetPassword(@RequestBody ResetPasswordUserDTO resetPasswordUserDTO){ // We don't use token for this request, it is public so cant use Authentication to get username here
@@ -85,13 +76,11 @@ public class UserController {
     }
 
     // TODO: 9/6/2020 Test
-    @CrossOrigin
     @PostMapping("/promoteUserToAdmin")
     @ResponseStatus(HttpStatus.OK)
     public void promoteUserToAdmin(Authentication authentication){ userServiceImpl.promoteUserToAdmin(authentication.getName()); }
 
     // TODO: 9/6/2020 Test
-    @CrossOrigin
     @PostMapping("/registerNewUserByAdmin")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_ADMIN')") // It's an admin so we are safe
@@ -100,7 +89,6 @@ public class UserController {
     }
 
     // TODO: 9/6/2020 Test
-    @CrossOrigin
     @PostMapping("/registerNewAdminByAdmin")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_ADMIN')") // It's an admin so we are safe
@@ -109,7 +97,6 @@ public class UserController {
     }
 
     // TODO: 9/6/2020 DELETE USER BY ADMIN
-    @CrossOrigin
     @DeleteMapping("/deleteUserByAdmin")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('ROLE_ADMIN')") // It's an admin so we are safe
@@ -118,19 +105,16 @@ public class UserController {
     }
 
     // TODO: 8/8/2020 Mine
-    @CrossOrigin
     @DeleteMapping("/delete")
     @ResponseStatus(HttpStatus.OK)
     public void delete(Authentication authentication){
         userServiceImpl.deleteUser(authentication.getName());
     }
 
-    @CrossOrigin
     @GetMapping("/getAllByPaging")
     @ResponseStatus(HttpStatus.OK) // It needs generally a token
     public Page<User> getAllByPaging(@RequestParam int page){ return userServiceImpl.getAllByPaging(page); }
 
-    @CrossOrigin
     @GetMapping("/getUsers")
     @ResponseStatus(HttpStatus.OK) // It needs generally a token
     public List<User> getAllUsers(){ return userServiceImpl.getUsers(); }
