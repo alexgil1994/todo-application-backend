@@ -49,4 +49,6 @@ public interface UserService {
     User registerNewUserByAdmin(String first_name, String last_name, String username, String email);
 
     User registerNewAdminByAdmin(String first_name, String last_name, String username, String email);
+
+    List<User> searchUsersContaining(String searchInput);
 }

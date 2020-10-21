@@ -113,7 +113,13 @@ public class UserController {
 
     @GetMapping("/getAllByPaging")
     @ResponseStatus(HttpStatus.OK) // It needs generally a token
-    public Page<User> getAllByPaging(@RequestParam int page){ return userServiceImpl.getAllByPaging(page); }
+    public Page<User> getAllByPaging(@RequestParam int page) { return userServiceImpl.getAllByPaging(page); }
+
+    @GetMapping("/searchUsers")
+    @ResponseStatus(HttpStatus.OK) // It needs generally a token
+    public List<User> searchUsers(@RequestParam String searchInput) {
+        return userServiceImpl.searchUsersContaining(searchInput);
+    }
 
     @GetMapping("/getUsers")
     @ResponseStatus(HttpStatus.OK) // It needs generally a token

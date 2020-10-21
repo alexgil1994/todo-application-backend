@@ -439,4 +439,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return newUser;
     }
 
+    @Override
+    public List<User> searchUsersContaining(String searchInput) {
+        if (StringUtils.isNotEmpty(searchInput) && StringUtils.isNotBlank(searchInput)) {
+            return userRepository.findByUsernameContainsIgnoreCase(searchInput);
+        } else throw new RuntimeException("SearchInput given by the user was either null or empty.");
+    }
+
 }
