@@ -51,6 +51,10 @@ public class UserController {
     @ResponseStatus(HttpStatus.OK)
     public User findUser(@RequestParam Long id){ return userServiceImpl.findUserById(id); }
 
+    @GetMapping("/visitUserByUsername")
+    @ResponseStatus(HttpStatus.OK)
+    public User visitUser(@RequestParam String visitUsername){ return userServiceImpl.findUserByUsername(visitUsername); }
+
     @PatchMapping("/patchUser")
     @ResponseStatus(HttpStatus.OK)
     public User patchUser(Authentication authentication, @RequestBody UserDTO userDTO){
