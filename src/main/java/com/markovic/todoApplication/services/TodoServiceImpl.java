@@ -44,6 +44,7 @@ public class TodoServiceImpl implements TodoService {
         Todo newTodo = createNewTodo(todoDTO);
         // This automatically triggers the save to the db
         existingUser.addTodo(newTodo);
+        userRepository.save(existingUser);
         Optional<Todo> optionalTodo = todoRepository.findByUuid(newTodo.getUuid());
         if (optionalTodo.isPresent()) return optionalTodo.get();
         else throw new RuntimeException("There was a problem trying to save the new Todo with uuid of: " + newTodo.getUuid() + ".");

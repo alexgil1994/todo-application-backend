@@ -45,7 +45,10 @@ public class UserController {
 
     @GetMapping("/findUserByUsername")
     @ResponseStatus(HttpStatus.OK)
-    public User findUser(Authentication authentication){ return userServiceImpl.findUserByUsername(authentication.getName()); }
+    public User findUser(Authentication authentication){
+        User user = userServiceImpl.findUserByUsername(authentication.getName());
+        return user;
+    }
 
     @GetMapping("/findUserById")
     @ResponseStatus(HttpStatus.OK)

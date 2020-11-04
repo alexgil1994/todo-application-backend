@@ -165,6 +165,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private void checkUserActivity(User existingUser, String ip) {
         if (checkStigma(ip) && !checkIfStigmaExistsInUserSet(ip, existingUser)) {
             existingUser.addStigma(new Stigma(ip));
+            userRepository.save(existingUser);
             try {
                 emailService.sendUserNewActivity(existingUser.getUsername(), existingUser.getEmail(), ip);
             } catch (Exception e) {
