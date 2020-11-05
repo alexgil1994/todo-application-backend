@@ -177,7 +177,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     
     // TODO: 8/16/2020 Impl for more than just ip
     private boolean checkIfStigmaExistsInUserSet(String ip, User existingUser) {
-        return stigmaRepository.getStigmaByIpAndUserIs(ip, existingUser) != null;
+        return stigmaRepository.getStigmaByIpAndUserIsOrderByIdDesc(ip, existingUser) != null;
     }
 
     // Checking if ip is null
@@ -443,7 +443,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public List<User> searchUsersContaining(String searchInput) {
         if (StringUtils.isNotEmpty(searchInput) && StringUtils.isNotBlank(searchInput)) {
-            return userRepository.findByUsernameContainsIgnoreCase(searchInput);
+            return userRepository.findByUsernameContainsIgnoreCaseOrderByUsernameAsc(searchInput);
         } else throw new RuntimeException("SearchInput given by the user was either null or empty.");
     }
 

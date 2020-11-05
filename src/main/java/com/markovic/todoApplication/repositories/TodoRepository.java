@@ -17,6 +17,6 @@ public interface TodoRepository extends CrudRepository<Todo, Long> {
     Optional<Todo> findByUuid(String uuid);
 
     @Query
-    Set<Todo> getTodoListByUserIs(User user);
+    Set<Todo> getTodoListByUserIsOrderByIdDesc(User user);
 
 }

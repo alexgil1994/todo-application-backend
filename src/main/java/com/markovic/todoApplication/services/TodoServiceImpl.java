@@ -32,7 +32,7 @@ public class TodoServiceImpl implements TodoService {
         if (optionalUser.isPresent()){
             User user = optionalUser.get();
             // Using byUserIs instead of id or username because jpa needs the whole object
-            return todoRepository.getTodoListByUserIs(user);
+            return todoRepository.getTodoListByUserIsOrderByIdDesc(user);
         } else {
             throw new RuntimeException("User with username of: " + tokenUsername + " does not exist");
         }
