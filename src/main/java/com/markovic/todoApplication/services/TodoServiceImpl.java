@@ -68,6 +68,7 @@ public class TodoServiceImpl implements TodoService {
             if (todoDTO.getTitle() != null) existingTodo.setTitle(todoDTO.getTitle());
             if (todoDTO.getDescription() != null) existingTodo.setDescription(todoDTO.getDescription());
             if (todoDTO.getDate_deadline() != null) existingTodo.setDate_deadline(todoDTO.getDate_deadline());
+            if (todoDTO.isFinished() || !todoDTO.isFinished()) existingTodo.setFinished(todoDTO.isFinished());
             return todoRepository.save(existingTodo);
         } else throw new RuntimeException("Todo with id of: " + todoDTO.getId() + " is not connected with User with id of: " + existingUser.getId());
     }
