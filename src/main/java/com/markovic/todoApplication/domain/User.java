@@ -41,6 +41,10 @@ public class User implements UserDetails {
 
     private String image_url;
 
+    private String background_image_url;
+
+    private String theme;
+
     private Date added_date;
 
     private Date last_login_date;
@@ -93,7 +97,7 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet, Set<Stigma> stigmaSet, int num_of_attempts, Date first_failed_attempt_time, boolean last_attempt_succeed) {
+    public User(Long id, String uuid, String first_name, String last_name, String username, String email, String password, String image_url, String background_image_url, String theme, Date added_date, Date last_login_date, Date last_login_date_display, Boolean is_enabled, Boolean is_not_locked, String user_role, String[] user_authorities, Set<Todo> todoSet, Set<Stigma> stigmaSet, int num_of_attempts, Date first_failed_attempt_time, boolean last_attempt_succeed) {
         this.id = id;
         this.uuid = uuid;
         this.first_name = first_name;
@@ -102,6 +106,8 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.image_url = image_url;
+        this.background_image_url = background_image_url;
+        this.theme = theme;
         this.added_date = added_date;
         this.last_login_date = last_login_date;
         this.last_login_date_display = last_login_date_display;
@@ -199,6 +205,22 @@ public class User implements UserDetails {
 
     public void setImage_url(String image_url) {
         this.image_url = image_url;
+    }
+
+    public String getBackground_image_url() {
+        return background_image_url;
+    }
+
+    public void setBackground_image_url(String background_image_url) {
+        this.background_image_url = background_image_url;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 
     public Date getAdded_date() {

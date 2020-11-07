@@ -14,16 +14,25 @@ public class UserDTO {
 
     private String ip;
 
+    private String image_url;
+
+    private String background_image_url;
+
+    private String theme;
+
     public UserDTO() {
     }
 
-    public UserDTO(String first_name, String last_name, String username, String email, String password, String ip) {
+    public UserDTO(String first_name, String last_name, String username, String email, String password, String ip, String image_url, String background_image_url, String theme) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.username = username;
         this.email = email;
         this.password = password;
         this.ip = ip;
+        this.image_url = image_url;
+        this.background_image_url = background_image_url;
+        this.theme = theme;
     }
 
     public String getFirst_name() {
@@ -72,5 +81,29 @@ public class UserDTO {
 
     public void setIp(String ip) {
         this.ip = ip;
+    }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
+    }
+
+    public String getBackground_image_url() {
+        return background_image_url;
+    }
+
+    public void setBackground_image_url(String background_image_url) {
+        this.background_image_url = background_image_url;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
     }
 }

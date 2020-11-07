@@ -298,7 +298,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 //        if (checkIfEditIsBySameUser(tokenUsername, existingUser)){ // Not needed anymore since I am getting the user from the token itself
             if (userDTO.getFirst_name() != null) existingUser.setFirst_name(userDTO.getFirst_name());
             if (userDTO.getLast_name() != null) existingUser.setLast_name(userDTO.getLast_name());
-            if (userDTO.getEmail() != null) existingUser.setEmail(userDTO.getEmail());
+//            if (userDTO.getEmail() != null) existingUser.setEmail(userDTO.getEmail());
             // TODO: 8/11/2020 Handle it differently sending an email also to require access for such change
             if (userDTO.getEmail() != null) {
                 // Patching Email Checking method will return null if not found (Exception-safe-method)
